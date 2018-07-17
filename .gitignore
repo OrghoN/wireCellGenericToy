@@ -76,6 +76,11 @@
 *.x86_64
 *.hex
 
+#Extensionless files
+*
+!/**/
+!*.*
+
 # Debug files
 *.dSYM/
 *.su
