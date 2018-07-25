@@ -12,7 +12,7 @@ def rotate(point, angle):
     return Point(point.x*math.cos(angle)+point.y*(math.sin(angle)),point.x*(-math.sin(angle))+point.y*math.cos(angle))
 
 def wireNumberFromPoint(plane, point):
-    return math.floor(math.cos(plane.angle)*point.x+math.sin(plane.angle)*point.y-math.cos(plane.angle)*plane.translationFactor)
+    return math.floor((math.cos(plane.angle)*point.x+math.sin(plane.angle)*point.y-math.cos(plane.angle)*plane.translationFactor)/plane.pitch)
 
 def generatePlaneInfo(wirePitches, volume):
     individualAngle = math.pi/len(wirePitches)
@@ -34,6 +34,27 @@ def generatePlaneInfo(wirePitches, volume):
 
     return planes
 
+def createMergedWires(firedWirePrimitives):
+    firedWirePrimitives = sorted(set(firedWirePrimitives))
+    gaps = [[s, e] for s, e in zip(firedWirePrimitives, firedWirePrimitives[1:]) if s+1 < e]
+    edges = iter(firedWirePrimitives[:1] + sum(gaps, []) + firedWirePrimitives[-1:])
+    return list(zip(edges, edges))
+
+def fireWires(planes, track):
+    firedWires = []
+
+    for planeNo, plane in enumerate(planes):
+        wire0 = wireNumberFromPoint(plane,track[0])
+        wire1 = wireNumberFromPoint(plane,track[1])
+
+        if wire0 > wire1:
+            wire0, wire1 = wire1, wire0
+
+        print(wire0," ",wire1)
+        firedWires.append(list(range(wire0,wire1+1)))
+
+    return firedWires
+
 def generateCells(planes, volume):
     #find out min pitch
     minPitch = min(planes, key = lambda t: t.pitch).pitch
@@ -54,17 +75,12 @@ def generateCells(planes, volume):
 
     return False
 
-def createMergedWires(firedWirePrimitives):
-    firedWirePrimitives = sorted(set(firedWirePrimitives))
-    gaps = [[s, e] for s, e in zip(firedWirePrimitives, firedWirePrimitives[1:]) if s+1 < e]
-    edges = iter(firedWirePrimitives[:1] + sum(gaps, []) + firedWirePrimitives[-1:])
-    return list(zip(edges, edges))
 
 volume = DetectorVolume(1000.0, 1000.0)
-wirePitches = [5.0,5.0,5.0,5.0]
+wirePitches = [5.0,5.0,5.0]
 
-pprint(createMergedWires([5,6,7,8,11,14,15,16,22,23,51,53,54]))
-
-# planes = generatePlaneInfo(wirePitches,volume)
+planes = generatePlaneInfo(wirePitches,volume)
+firedWires = fireWires(planes, [Point(250,150),Point(300,250)])
+# pprint(firedWires)
 # generateCells(planes,volume)
 # pprint(planes)
