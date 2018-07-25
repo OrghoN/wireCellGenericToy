@@ -14,6 +14,16 @@ def rotate(point, angle):
 def wireNumberFromPoint(plane, point):
     return math.floor((math.cos(plane.angle)*point.x+math.sin(plane.angle)*point.y-math.cos(plane.angle)*plane.translationFactor)/plane.pitch)
 
+def intersectionToCell(planes, points):
+    cell = []
+    for plane in planes:
+        wires = []
+        for point in point:
+            wires.append(wireNumberFromPoint(point))
+        cell.append((min(wires),max(wires)))
+
+    return cell
+
 def generatePlaneInfo(wirePitches, volume):
     individualAngle = math.pi/len(wirePitches)
     planes = []
@@ -50,7 +60,6 @@ def fireWires(planes, track):
         if wire0 > wire1:
             wire0, wire1 = wire1, wire0
 
-        print(wire0," ",wire1)
         firedWires.append(list(range(wire0,wire1+1)))
 
     return firedWires
