@@ -10,8 +10,12 @@ Point.__doc__ = '''A 2-dimensional coordinate'''
 Point.x.__doc__ = '''x coordinate'''
 Point.y.__doc__ = '''y coordinate'''
 
-PlaneInfo = namedtuple('PlaneInfo', [
-                       'angle', 'pitch', 'noOfWires', 'translationFactor', 'sin', 'cos', 'gradient'])
+Line = namedtuple('Line', ['point0', 'point1'])
+Line.__doc__ = '''A line defined by two points'''
+Line.point0.__doc__ = '''First Point'''
+Line.point1.__doc__ = '''Second Point'''
+
+PlaneInfo = namedtuple('PlaneInfo', ['angle', 'pitch', 'noOfWires', 'translationFactor', 'sin', 'cos', 'gradient'])
 PlaneInfo.__doc__ = '''List of information about planes'''
 PlaneInfo.angle.__doc__ = '''angle by whitch plane is roatated'''
 PlaneInfo.pitch.__doc__ = '''wire pitch for the plane'''
@@ -160,18 +164,18 @@ def makeLines(plane, wires):
         line0 = [point0, Point(point0.x + 1, point0.y + plane.gradient)]
         line1 = [point1, Point(point1.x + 1, point1.y + plane.gradient)]
 
-    return [line0, line1]
+    return Line(line0, line1)
 
 
 def lineIntersection(line0, line1):
     #Doesnt account for parallel line case
-    px = ((line0[0][0] * line0[1][1] - line0[0][1] * line0[1][0]) * (line1[0][0] - line1[1][0]) - (line0[0][0] - line0[1][0]) * (line1[0][0] * line1[1][1] -
-                                                                                                                                 line1[0][1] * line1[1][0])) / ((line0[0][0] - line0[1][0]) * (line1[0][1] - line1[1][1]) - (line0[0][1] - line0[1][1]) * (line1[0][0] - line1[1][0]))
-    py = ((line0[0][0] * line0[1][1] - line0[0][1] * line0[1][0]) * (line1[0][1] - line1[1][1]) - (line0[0][1] - line0[1][1]) * (line1[0][0] * line1[1][1] -
-                                                                                                                                 line1[0][1] * line1[1][0])) / ((line0[0][0] - line0[1][0]) * (line1[0][1] - line1[1][1]) - (line0[0][1] - line0[1][1]) * (line1[0][0] - line1[1][0]))
+    px = ((line0.point0.x * line0.point1.y - line0.point0.y * line0.point1.x) * (line1.point0.x - line1.point1.x) - (line0.point0.x - line0.point1.x) * (line1.point0.x * line1.point1.y -
+                                                                                                                                 line1.point0.y * line1.point1.x)) / ((line0.point0.x - line0.point1.x) * (line1.point0.y - line1.point1.y) - (line0.point0.y - line0.point1.y) * (line1.point0.x - line1.point1.x))
+    py = ((line0.point0.x * line0.point1.y - line0.point0.y * line0.point1.x) * (line1.point0.y - line1.point1.y) - (line0.point0.y - line0.point1.y) * (line1.point0.x * line1.point1.y -
+                                                                                                                                 line1.point0.y * line1.point1.x)) / ((line0.point0.x - line0.point1.x) * (line1.point0.y - line1.point1.y) - (line0.point0.y - line0.point1.y) * (line1.point0.x - line1.point1.x))
     return Point(px, py)
 
-    # def findIntersection(line0[0][0],line0[0][1],line0[1][0],line0[1][1],line1[0][0],line1[0][1],line1[1][0],line1[1][1]):
+    # def findIntersection(line0.point0.x,line0.point0.y,line0.point1.x,line0.point1.y,line1.point0.x,line1.point0.y,line1.point1.x,line1.point1.y):
 
 # counterClockwise turn of axis
 
@@ -195,8 +199,8 @@ def rotate(point, angle):
 volume = DetectorVolume(1000.0, 1000.0)
 wirePitches = [5.0, 5.0, 5.0]
 
-line0 = [Point(-1,-1),Point(-1,1)]
-line1 = [Point(-1,-1),Point(-1,1)]
+line1 = Line(Point(-1,1),Point(-2,2))
+line0 = Line(Point(1,1),Point(2,2))
 pprint(lineIntersection(line0, line1))
 planes = generatePlaneInfo(wirePitches, volume)
 # event = generateEvent(planes,volume)
