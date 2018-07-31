@@ -1,5 +1,6 @@
 from collections import namedtuple
 from pprint import pprint
+import sys
 import numpy as np
 import itertools
 import math
@@ -194,7 +195,7 @@ def checkCell(planes, wires):
     potentialPoints = []
     points = []
 
-    for plane0 in range(0,len(wires)-1):
+    for plane0 in range(0,len(wires)):
         for plane1 in  range(plane0+1,len(wires)):
             potentialPoints.extend(wireIntersection(planes[plane0], wires[plane0], planes[plane1], wires[plane1]))
 
@@ -209,30 +210,35 @@ def checkCell(planes, wires):
 
     print(points)
 
-    if len(points <= 2):
-        return False
-    else:
-        return mergeEvent(fireWires(planes,points))
+    # if len(points <= 2):
+    #     return False
+    # else:
+    return mergeEvent(fireWires(planes,points))
 
 def rotate(point, angle):
     # counterClockwise turn of axis
     return Point(point.x * math.cos(angle) + point.y * (math.sin(angle)), point.x * (-math.sin(angle)) + point.y * math.cos(angle))
 
+################################################################################
 
-volume = DetectorVolume(1000.0, 1000.0)
-wirePitches = [5.0, 5.0, 5.0]
-planes = generatePlaneInfo(wirePitches, volume)
-# event = generateEvent(planes,volume)
-# event = mergeEvent(event)
+def main(argv):
+    volume = DetectorVolume(1000.0, 1000.0)
+    wirePitches = [5.0, 5.0, 5.0]
+    planes = generatePlaneInfo(wirePitches, volume)
+    # event = generateEvent(planes,volume)
+    # event = mergeEvent(event)
 
-blob = mergeEvent(fireWires(planes,[Point(300,300),Point(500,500)]))
-blob = list(itertools.chain(*blob))
-pprint(blob)
-pprint(checkCell(planes,blob))
-
-
-# pprint(wireIntersection(planes[0], (10,50), planes[1], (200,300)))
+    blob = mergeEvent(fireWires(planes,[Point(300,300),Point(500,500)]))
+    blob = list(itertools.chain(*blob))
+    pprint(blob)
+    pprint(checkCell(planes,blob))
 
 
-# pprint(planes)
-# pprint(event)
+    # pprint(wireIntersection(planes[0], (10,50), planes[1], (200,300)))
+
+
+    # pprint(planes)
+    # pprint(event)
+
+if __name__ == "__main__":
+    main(sys.argv)
