@@ -85,18 +85,21 @@ def generatePlaneInfo(wirePitches, volume):
 def wireNumberFromPoint(plane, point):
     return math.floor((plane.cos * point.x + plane.sin * point.y - plane.cos * plane.translationFactor) / plane.pitch)
 
-
 def fireWires(planes, track):
     firedWires = []
 
     for planeNo, plane in enumerate(planes):
-        wire0 = wireNumberFromPoint(plane, track[0])
-        wire1 = wireNumberFromPoint(plane, track[1])
+        for pointNo, point in enumerate(track):
+            wireNo = wireNumberFromPoint(plane, point)
+            if pointNo == 0:
+                min = wireNo
+                max = wireNo
+            elif wireNo > max:
+                max = wireNo
+            elif wireNo < min:
+                min = wireNo
 
-        if wire0 > wire1:
-            wire0, wire1 = wire1, wire0
-
-        firedWires.append(list(range(wire0, wire1 + 1)))
+        firedWires.append(list(range(min, max + 1)))
 
     return firedWires
 
@@ -158,13 +161,13 @@ def makeLines(plane, wires):
         point1 = Point(dist1 * plane.cos, dist1 * plane.sin)
 
     if plane.gradient == "INF":
-        line0 = [point0, Point(point0.x, point0.y + 1)]
-        line1 = [point1, Point(point1.x, point1.y + 1)]
+        line0 = Line(point0, Point(point0.x, point0.y + 1))
+        line1 = Line(point1, Point(point1.x, point1.y + 1))
     else:
-        line0 = [point0, Point(point0.x + 1, point0.y + plane.gradient)]
-        line1 = [point1, Point(point1.x + 1, point1.y + plane.gradient)]
+        line0 = Line(point0, Point(point0.x + 1, point0.y + plane.gradient))
+        line1 = Line(point1, Point(point1.x + 1, point1.y + plane.gradient))
 
-    return Line(line0, line1)
+    return [line0, line1]
 
 
 def lineIntersection(line0, line1):
@@ -175,12 +178,20 @@ def lineIntersection(line0, line1):
                                                                                                                                  line1.point0.y * line1.point1.x)) / ((line0.point0.x - line0.point1.x) * (line1.point0.y - line1.point1.y) - (line0.point0.y - line0.point1.y) * (line1.point0.x - line1.point1.x))
     return Point(px, py)
 
-    # def findIntersection(line0.point0.x,line0.point0.y,line0.point1.x,line0.point1.y,line1.point0.x,line1.point0.y,line1.point1.x,line1.point1.y):
+def wireIntersection(plane0, wire0, plane1, wire1):
+    points = []
+    Lines0 = makeLines(plane0, wire0)
+    Lines1 = makeLines(plane1, wire1)
 
-# counterClockwise turn of axis
+    points.append(lineIntersection(Lines0[0],Lines1[0]))
+    points.append(lineIntersection(Lines0[1],Lines1[0]))
+    points.append(lineIntersection(Lines0[0],Lines1[1]))
+    points.append(lineIntersection(Lines0[1],Lines1[1]))
 
+    return points
 
 def rotate(point, angle):
+    # counterClockwise turn of axis
     return Point(point.x * math.cos(angle) + point.y * (math.sin(angle)), point.x * (-math.sin(angle)) + point.y * math.cos(angle))
 
 
@@ -198,14 +209,14 @@ def rotate(point, angle):
 
 volume = DetectorVolume(1000.0, 1000.0)
 wirePitches = [5.0, 5.0, 5.0]
-
-line1 = Line(Point(-1,1),Point(-2,2))
-line0 = Line(Point(1,1),Point(2,2))
-pprint(lineIntersection(line0, line1))
 planes = generatePlaneInfo(wirePitches, volume)
 # event = generateEvent(planes,volume)
 # event = mergeEvent(event)
-# pprint(event)
-# pprint(firedWires)
-# generateCells(planes,volume)
+
+track = [Point(500,500),Point(350,350)]
+
+# pprint(wireIntersection(planes[0], (10,50), planes[1], (200,300)))
+
+
 # pprint(planes)
+# pprint(event)
