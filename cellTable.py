@@ -190,21 +190,33 @@ def wireIntersection(plane0, wire0, plane1, wire1):
 
     return points
 
+def checkCell(planes, wires):
+    potentialPoints = []
+    points = []
+
+    for plane0 in range(0,len(wires)-1):
+        for plane1 in  range(plane0+1,len(wires)):
+            potentialPoints.extend(wireIntersection(planes[plane0], wires[plane0], planes[plane1], wires[plane1]))
+
+    for point in potentialPoints:
+        isPointInside = True
+        for planeNo, plane in enumerate(planes):
+            wire = wireNumberFromPoint(plane, point)
+            if wire<wires[planeNo][0] or wire>wires[planeNo][1]:
+                isPointInside = False
+        if isPointInside:
+            points.append(point)
+
+    print(points)
+
+    if len(points <= 2):
+        return False
+    else:
+        return mergeEvent(fireWires(planes,points))
+
 def rotate(point, angle):
     # counterClockwise turn of axis
     return Point(point.x * math.cos(angle) + point.y * (math.sin(angle)), point.x * (-math.sin(angle)) + point.y * math.cos(angle))
-
-
-#
-# def intersectionToCell(planes, points):
-#     cell = []
-#     for plane in planes:
-#         wires = []
-#         for point in point:
-#             wires.append(wireNumberFromPoint(point))
-#         cell.append((min(wires), max(wires)))
-#
-#     return cell
 
 
 volume = DetectorVolume(1000.0, 1000.0)
@@ -213,7 +225,11 @@ planes = generatePlaneInfo(wirePitches, volume)
 # event = generateEvent(planes,volume)
 # event = mergeEvent(event)
 
-track = [Point(500,500),Point(350,350)]
+blob = mergeEvent(fireWires(planes,[Point(300,300),Point(500,500)]))
+blob = list(itertools.chain(*blob))
+pprint(blob)
+pprint(checkCell(planes,blob))
+
 
 # pprint(wireIntersection(planes[0], (10,50), planes[1], (200,300)))
 
