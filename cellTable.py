@@ -37,9 +37,9 @@ def generatePlaneInfo(wirePitches, volume):
 
     Parameters
     ----------
-    @param wirePitches : list or tuple of int or float
+    wirePitches : int or tuple of int or float
         A list of wire pitches, each number corresponding to the pitch of each plane
-    @param volume : Detector Volume
+    volume : DetectorVolume
         The width and height of the detector
 
     Returns
@@ -205,15 +205,20 @@ def checkCell(planes, wires):
             wire = wireNumberFromPoint(plane, point)
             if wire<wires[planeNo][0] or wire>wires[planeNo][1]:
                 isPointInside = False
-        if isPointInside:
+                print(wire<wires[planeNo][0],wire>wires[planeNo][1])
+                print("\033[91m",wires[planeNo][0]," | ", wire, " | ", wires[planeNo][1],"\033[0m")
+            else:
+                print("\033[92m",wires[planeNo][0]," | ", wire, " | ", wires[planeNo][1],"\033[0m")
+        if isPointInside or not isPointInside:
             points.append(point)
+        print("\n")
 
-    print(points)
+    # print(points)
 
-    # if len(points <= 2):
-    #     return False
-    # else:
-    return mergeEvent(fireWires(planes,points))
+    if len(points) <=2:
+        return False
+    else:
+        return mergeEvent(fireWires(planes,points)),points
 
 def rotate(point, angle):
     # counterClockwise turn of axis
@@ -229,8 +234,8 @@ def main(argv):
     # event = mergeEvent(event)
 
     blob = mergeEvent(fireWires(planes,[Point(300,300),Point(500,500)]))
-    blob = list(itertools.chain(*blob))
     pprint(blob)
+    blob = list(itertools.chain(*blob))
     pprint(checkCell(planes,blob))
 
 
