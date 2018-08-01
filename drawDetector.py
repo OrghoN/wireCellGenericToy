@@ -35,12 +35,15 @@ def makeCenterLines(plane, wires):
 
     return lines
 
-def makeEventLines(planes, event):
+def makeEventLines(planes, event, useCenterLines):
     lines = []
 
     for planeNo, plane in enumerate(event):
         for wire in plane:
-            lines.extend(makeCenterLines(planes[planeNo],wire))
+            if useCenterLines:
+                lines.extend(makeCenterLines(planes[planeNo],wire))
+            else:
+                lines.extend(cellTable.makeLines(planes[planeNo],wire))
     return lines
 
 def drawEventLines(lines, volume):
@@ -66,18 +69,48 @@ def main(argv):
     wirePitches = [5.0, 5.0, 5.0]
     planes = cellTable.generatePlaneInfo(wirePitches, volume)
 
-    event = cellTable.generateEvent(planes,volume)
-    event = cellTable.mergeEvent(event)
-    eventLines = makeEventLines(planes,event)
+    # event = cellTable.generateEvent(planes,volume)
+    # event = cellTable.mergeEvent(event)
+    # pprint(event)
+    # eventLines = makeEventLines(planes,event, True)
+    # pprint(len(eventLines))
+
+    blob = cellTable.mergeEvent(cellTable.fireWires(planes,[Point(300,300),Point(500,500)]))
+    eventLines = makeEventLines(planes,blob, True)
+    eventLines = drawEventLines(eventLines,volume)
+
+    pprint(blob)
+
+    blob = list(itertools.chain(*blob))
+    recoBlob, recoPoints = cellTable.checkCell(planes,blob)
+
+    pprint(recoBlob)
+    # pprint(recoPoints)
+
+    recoMarkers = list(map(lambda p: root.TMarker(p.x,p.y,21), recoPoints))
+
+    recoEventLines = makeEventLines(planes,recoBlob, True)
+    recoEventLines = drawEventLines(recoEventLines,volume)
+
 
     c1 = root.TCanvas( "Detector", "Detector", 200, 10, 700, 700 )
     c1.Range(0,0,volume.width,volume.height)
 
-    eventLines = drawEventLines(eventLines,volume)
+    recoColor = root.kRed
+
     for line in eventLines:
         line.Draw()
 
-    root.gApplication.Run()
+    for line in recoEventLines:
+        line.SetLineColor(recoColor)
+        line.SetLineStyle(2)
+        line.Draw()
+
+    for marker in recoMarkers:
+        marker.SetMarkerColor(recoColor)
+        marker.Draw()
+
+    # root.gApplication.Run()
 
 
 if __name__ == "__main__":
