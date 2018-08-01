@@ -11,12 +11,14 @@ from cellTable import PlaneInfo
 from cellTable import DetectorVolume
 import cellTable
 
+import ROOT as root
+
 def makeCenterLines(plane, wires):
     lines = []
 
     for wireNo in range(wires[0], wires[1]+1):
         # print(wireNo)
-        dist = plane.pitch * wires[0] + plane.pitch/2
+        dist = plane.pitch * wireNo + plane.pitch/2
 
         if plane.translationFactor > 0:
             point = Point(plane.translationFactor -
@@ -41,6 +43,22 @@ def makeEventLines(planes, event):
             lines.extend(makeCenterLines(planes[planeNo],wire))
     return lines
 
+def drawEventLines(lines, volume):
+    drawLines = []
+
+    x0 = 0
+    x1 = volume.width
+
+    for lineNo, line in enumerate(lines):
+        if(math.isclose(line[0].x, line[1].x, rel_tol=1e-5)):
+            drawLines.append(root.TLine(line[0].x,0,line[0].x,volume.height))
+        else:
+            gradient = (line[1].y-line[0].y)/(line[1].x-line[0].x)
+            y0 = gradient * x0 - gradient * line[0].x + line[0].y
+            y1 = gradient * x1 - gradient * line[0].x + line[0].y
+            drawLines.append(root.TLine(x0,y0,x1,y1))
+
+    return drawLines
 ################################################################################
 
 def main(argv):
@@ -50,12 +68,16 @@ def main(argv):
 
     event = cellTable.generateEvent(planes,volume)
     event = cellTable.mergeEvent(event)
+    eventLines = makeEventLines(planes,event)
 
-    # lines = makeCenterLines(planes[2], (5,10))
-    # pprint(lines)
+    c1 = root.TCanvas( "Detector", "Detector", 200, 10, 700, 700 )
+    c1.Range(0,0,volume.width,volume.height)
 
-    pprint(event)
-    pprint(makeEventLines(planes, event))
+    eventLines = drawEventLines(eventLines,volume)
+    for line in eventLines:
+        line.Draw()
+
+    root.gApplication.Run()
 
 
 if __name__ == "__main__":
