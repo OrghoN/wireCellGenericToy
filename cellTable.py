@@ -20,7 +20,7 @@ PlaneInfo = namedtuple('PlaneInfo', ['angle', 'pitch', 'noOfWires', 'translation
 PlaneInfo.__doc__ = '''List of information about planes'''
 PlaneInfo.angle.__doc__ = '''angle by whitch plane is roatated'''
 PlaneInfo.pitch.__doc__ = '''wire pitch for the plane'''
-PlaneInfo.noOfWires.__doc__ = '''number of wires in the plane_'''
+PlaneInfo.noOfWires.__doc__ = '''number of wires in the plane'''
 PlaneInfo.translationFactor.__doc__ = '''x offset for origin of the plane (y origin is always 0)'''
 PlaneInfo.sin.__doc__ = '''sin of the plane angle'''
 PlaneInfo.cos.__doc__ = '''cos of the plane angle'''
@@ -48,7 +48,7 @@ def generatePlaneInfo(wirePitches, volume):
 
     Returns
     -------
-    list of Plane Info
+    list of PlaneInfo
         List of information regarding the planes.
 
     """
@@ -88,9 +88,39 @@ def generatePlaneInfo(wirePitches, volume):
 
 
 def wireNumberFromPoint(plane, point):
+    """Generates the wire number for a point given a certain plane
+
+    Parameters
+    ----------
+    plane : PlaneInfo
+        Plane information for the plane the wire number is for
+    point : Point
+        The point being queried
+
+    Returns
+    -------
+    int
+        Wire number
+
+    """
     return round((plane.cos * point.x + plane.sin * point.y - plane.cos * plane.translationFactor) / plane.pitch)
 
 def fireWires(planes, track):
+    """Show which wires have been hit for a given track
+
+    Parameters
+    ----------
+    planes : list of PlaneInfo
+        A list containing information for all the planes in the detector
+    track : list of Points
+        List containing the points that define the convex hull of a blob
+
+    Returns
+    -------
+    2d list of int
+        A list that has lists of wire numbers. one list for every plane
+
+    """
     firedWires = []
 
     for planeNo, plane in enumerate(planes):
@@ -261,7 +291,7 @@ def generateMatrix(planes, cells):
 
             matrix[wires.index(trueWire)][cellNo] = 1
 
-    return matrix
+    return wires, matrix
 
 def rotate(point, angle):
     # counterClockwise turn of axis
@@ -277,7 +307,7 @@ def main(argv):
     event = mergeEvent(event)
     cells = generateCells(planes,event)
 
-    matrix = generateMatrix(planes,cells)
+    wireList, matrix = generateMatrix(planes,cells)
 
     # pprint(matrix)
     # pprint(planes)
