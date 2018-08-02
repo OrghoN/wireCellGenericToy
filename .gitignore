@@ -1,5 +1,5 @@
 # PDF
-.pdf
+*.pdf
 
 # Packages
 *.7z
