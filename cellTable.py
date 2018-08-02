@@ -31,6 +31,10 @@ DetectorVolume.__doc__ = '''2D dimensions of the detector'''
 DetectorVolume.width.__doc__ = '''width of detector'''
 DetectorVolume.height.__doc__ = '''height of detector'''
 
+Cell = namedtuple('Cell', ['wires','points'])
+Cell.__doc__='''Merged Cell in Detector'''
+Cell.wires.__doc__='''binding wires of the cell'''
+Cell.points.__doc__='''points binding the cell'''
 
 def generatePlaneInfo(wirePitches, volume):
     """Generates information about planes based on wire pitches and volume assuming equal angle between each plane and the next
@@ -84,7 +88,7 @@ def generatePlaneInfo(wirePitches, volume):
 
 
 def wireNumberFromPoint(plane, point):
-    return math.floor((plane.cos * point.x + plane.sin * point.y - plane.cos * plane.translationFactor) / plane.pitch)
+    return round((plane.cos * point.x + plane.sin * point.y - plane.cos * plane.translationFactor) / plane.pitch)
 
 def fireWires(planes, track):
     firedWires = []
@@ -107,8 +111,8 @@ def fireWires(planes, track):
 
 def generateEvent(planes, volume):
     event = []
-    # for i in range(0,np.random.randint(2,15)):
-    for i in range(0, 4):
+    for i in range(0,np.random.randint(2,15)):
+    # for i in range(0, 4):
         point0 = Point(np.random.random_sample() * volume.width,
                        np.random.random_sample() * volume.height)
 
@@ -197,6 +201,7 @@ def checkCell(planes, wires):
 
     for plane0 in range(0,len(wires)):
         for plane1 in  range(plane0+1,len(wires)):
+            # print(plane0,plane1)
             potentialPoints.extend(wireIntersection(planes[plane0], wires[plane0], planes[plane1], wires[plane1]))
 
     for point in potentialPoints:
@@ -205,20 +210,58 @@ def checkCell(planes, wires):
             wire = wireNumberFromPoint(plane, point)
             if wire<wires[planeNo][0] or wire>wires[planeNo][1]:
                 isPointInside = False
-                print(wire<wires[planeNo][0],wire>wires[planeNo][1])
-                print("\033[91m",wires[planeNo][0]," | ", wire, " | ", wires[planeNo][1],"\033[0m")
-            else:
-                print("\033[92m",wires[planeNo][0]," | ", wire, " | ", wires[planeNo][1],"\033[0m")
-        if isPointInside or not isPointInside:
+                # print(wire<wires[planeNo][0],wire>wires[planeNo][1])
+                # print("\033[91m",wires[planeNo][0]," | ", wire, " | ", wires[planeNo][1],"\033[0m")
+            # else:
+                # print("\033[92m",wires[planeNo][0]," | ", wire, " | ", wires[planeNo][1],"\033[0m")
+        if isPointInside:
             points.append(point)
-        print("\n")
 
     # print(points)
 
     if len(points) <=2:
-        return False
+        return Cell(False, False)
     else:
-        return mergeEvent(fireWires(planes,points)),points
+        return Cell(list(itertools.chain(*mergeEvent(fireWires(planes,points)))),points)
+
+def generateCells(planes,event):
+    cells = []
+    potentialCells = list(itertools.product(*event))
+    for potentialCell in potentialCells:
+        cell = checkCell(planes, potentialCell)
+        if cell[0] == False:
+            continue
+        else:
+            cells.append(cell)
+
+    return cells
+
+def getTrueWireNo(planes, wireNo, planeNo):
+    trueWireNo = 0
+
+    for plane in range(0,planeNo):
+        trueWireNo += planes[plane].noOfWires
+
+    trueWireNo += wireNo
+
+    return trueWireNo
+
+def generateMatrix(planes, cells):
+    cellBindings = []
+    wires = []
+    matrix = []
+
+    for cellNo, cell in enumerate(cells):
+        for planeNo, wire in enumerate(cell.wires):
+            trueWire = (getTrueWireNo(planes,wire[0],planeNo),getTrueWireNo(planes,wire[0],planeNo))
+
+            if trueWire not in wires:
+                wires.append(trueWire)
+                matrix.append(list(np.zeros(len(cells),dtype=int)))
+
+            matrix[wires.index(trueWire)][cellNo] = 1
+
+    return matrix
 
 def rotate(point, angle):
     # counterClockwise turn of axis
@@ -230,20 +273,19 @@ def main(argv):
     volume = DetectorVolume(1000.0, 1000.0)
     wirePitches = [5.0, 5.0, 5.0]
     planes = generatePlaneInfo(wirePitches, volume)
-    # event = generateEvent(planes,volume)
-    # event = mergeEvent(event)
+    event = generateEvent(planes,volume)
+    event = mergeEvent(event)
+    cells = generateCells(planes,event)
 
-    blob = mergeEvent(fireWires(planes,[Point(300,300),Point(500,500)]))
-    pprint(blob)
-    blob = list(itertools.chain(*blob))
-    pprint(checkCell(planes,blob))
+    matrix = generateMatrix(planes,cells)
 
-
-    # pprint(wireIntersection(planes[0], (10,50), planes[1], (200,300)))
-
-
+    # pprint(matrix)
     # pprint(planes)
-    # pprint(event)
+    pprint(event)
+
+    for row in matrix:
+        print(row)
+
 
 if __name__ == "__main__":
     main(sys.argv)
