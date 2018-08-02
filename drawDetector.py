@@ -12,6 +12,8 @@ from cellTable import DetectorVolume
 import cellTable
 
 import ROOT as root
+from scipy.spatial import ConvexHull
+import ctypes
 
 def makeCenterLines(plane, wires):
     lines = []
@@ -62,6 +64,25 @@ def drawEventLines(lines, volume):
             drawLines.append(root.TLine(x0,y0,x1,y1))
 
     return drawLines
+
+def drawCells(cells):
+    drawnCells =[]
+
+    for cell in cells:
+        drawnCells.extend(list(map(lambda p: root.TMarker(p.x,p.y,21), cell.points)))
+
+    return drawnCells
+
+def sortPoints(points):
+    sortedPoints = []
+    hull = ConvexHull(points)
+
+    for pointNo in reversed(hull.vertices):
+        # sortedPoints.append(points[pointNo])
+        sortedPoints.append(hull.points[pointNo])
+
+    return sortedPoints
+
 ################################################################################
 
 def main(argv):
@@ -69,48 +90,42 @@ def main(argv):
     wirePitches = [5.0, 5.0, 5.0]
     planes = cellTable.generatePlaneInfo(wirePitches, volume)
 
-    # event = cellTable.generateEvent(planes,volume)
-    # event = cellTable.mergeEvent(event)
-    # pprint(event)
-    # eventLines = makeEventLines(planes,event, True)
-    # pprint(len(eventLines))
+    event = cellTable.generateEvent(planes,volume)
+    event = cellTable.mergeEvent(event)
+    pprint(event)
 
-    blob = cellTable.mergeEvent(cellTable.fireWires(planes,[Point(300,300),Point(500,500)]))
-    eventLines = makeEventLines(planes,blob, True)
-    eventLines = drawEventLines(eventLines,volume)
+    cells = cellTable.generateCells(planes,event)
 
-    pprint(blob)
+    drawnLines = makeEventLines(planes,event, True)
+    drawnLines =drawEventLines(drawnLines,volume)
 
-    blob = list(itertools.chain(*blob))
-    recoBlob, recoPoints = cellTable.checkCell(planes,blob)
+    drawnCells = drawCells(cells)
 
-    pprint(recoBlob)
-    # pprint(recoPoints)
+    # sorted = sortPoints(recoPoints)
+    # sortedx = np.array(list(map(lambda p: p[0], sorted)))
+    # sortedy = np.array(list(map(lambda p: p[1], sorted)))
+    #
+    # Cx = (ctypes.c_double * len(sorted))(*sortedx)
+    # Cy = (ctypes.c_double * len(sorted))(*sortedy)
+    #
+    # cell = root.TGeoPolygon(len(sorted))
+    # cell.SetXY(Cx, Cy)
+    # cell.FinishPolygon()
+    # pprint(cell.Area())
 
-    recoMarkers = list(map(lambda p: root.TMarker(p.x,p.y,21), recoPoints))
-
-    recoEventLines = makeEventLines(planes,recoBlob, True)
-    recoEventLines = drawEventLines(recoEventLines,volume)
-
-
-    c1 = root.TCanvas( "Detector", "Detector", 200, 10, 700, 700 )
+    c1 = root.TCanvas( "Detector", "Detector", 200, 10, 700, int(700*(volume.height/volume.width)) )
     c1.Range(0,0,volume.width,volume.height)
 
     recoColor = root.kRed
 
-    for line in eventLines:
+    for line in drawnLines:
         line.Draw()
 
-    for line in recoEventLines:
-        line.SetLineColor(recoColor)
-        line.SetLineStyle(2)
-        line.Draw()
-
-    for marker in recoMarkers:
+    for marker in drawnCells:
         marker.SetMarkerColor(recoColor)
         marker.Draw()
 
-    # root.gApplication.Run()
+    root.gApplication.Run()
 
 
 if __name__ == "__main__":
