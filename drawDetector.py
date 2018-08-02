@@ -65,11 +65,21 @@ def drawEventLines(lines, volume):
 
     return drawLines
 
-def drawCells(cells):
+def drawCells(cells, asMarker):
     drawnCells =[]
 
-    for cell in cells:
-        drawnCells.extend(list(map(lambda p: root.TMarker(p.x,p.y,21), cell.points)))
+    if asMarker:
+        for cell in cells:
+            sortedPoints = sortPoints(cell.points)
+            drawnCells.extend(list(map(lambda p: root.TMarker(p.x,p.y,21), sortedPoints)))
+    else:
+        for cell in cells:
+            sortedPoints = sortPoints(cell.points)
+
+            for i in range(1, len(sortedPoints)):
+                drawnCells.append(root.TLine(sortedPoints[i-1].x,sortedPoints[i-1].y,sortedPoints[i].x,sortedPoints[i].y))
+
+            drawnCells.append(root.TLine(sortedPoints[-1].x,sortedPoints[-1].y,sortedPoints[0].x,sortedPoints[0].y))
 
     return drawnCells
 
@@ -78,8 +88,8 @@ def sortPoints(points):
     hull = ConvexHull(points)
 
     for pointNo in reversed(hull.vertices):
-        # sortedPoints.append(points[pointNo])
-        sortedPoints.append(hull.points[pointNo])
+        sortedPoints.append(points[pointNo])
+        # sortedPoints.append(hull.points[pointNo])
 
     return sortedPoints
 
@@ -92,14 +102,32 @@ def main(argv):
 
     event = cellTable.generateEvent(planes,volume)
     event = cellTable.mergeEvent(event)
-    pprint(event)
 
     cells = cellTable.generateCells(planes,event)
+
+    # wireList, matrix = cellTable.generateMatrix(planes,cells)
+
+    pprint(event)
+
+    # for row in matrix:
+    #     print(row)
+
+
+
+########  ########     ###    ##      ## #### ##    ##  ######
+##     ## ##     ##   ## ##   ##  ##  ##  ##  ###   ## ##    ##
+##     ## ##     ##  ##   ##  ##  ##  ##  ##  ####  ## ##
+##     ## ########  ##     ## ##  ##  ##  ##  ## ## ## ##   ####
+##     ## ##   ##   ######### ##  ##  ##  ##  ##  #### ##    ##
+##     ## ##    ##  ##     ## ##  ##  ##  ##  ##   ### ##    ##
+########  ##     ## ##     ##  ###  ###  #### ##    ##  ######
+
 
     drawnLines = makeEventLines(planes,event, True)
     drawnLines =drawEventLines(drawnLines,volume)
 
-    drawnCells = drawCells(cells)
+    asMarker = True
+    drawnCells = drawCells(cells, asMarker)
 
     # sorted = sortPoints(recoPoints)
     # sortedx = np.array(list(map(lambda p: p[0], sorted)))
@@ -122,7 +150,12 @@ def main(argv):
         line.Draw()
 
     for marker in drawnCells:
-        marker.SetMarkerColor(recoColor)
+        if asMarker:
+            marker.SetMarkerColor(recoColor)
+        else:
+            marker.SetLineWidth(4)
+            # marker.SetLineStyle(2)
+            marker.SetLineColor(recoColor)
         marker.Draw()
 
     root.gApplication.Run()
