@@ -155,8 +155,8 @@ def generateTracks(planes,volume):
         point0 = Point(np.random.random_sample() * volume.width,
                        np.random.random_sample() * volume.height)
 
-        xOffset = point0.x + np.random.random_sample() * 300
-        yOffset = point0.y + np.random.random_sample() * 300
+        xOffset = point0.x + np.random.random_sample() * 30
+        yOffset = point0.y + np.random.random_sample() * 30
 
         if xOffset > volume.width:
             xOffset = volume.width
@@ -311,6 +311,37 @@ def generateMatrix(planes, cells):
 
     return wires, matrix
 
+def generateCharge(planes,tracks):
+    charge = []
+
+    meanCharge, sigmaCharge = 5, 0.1
+
+    for plane in planes:
+        charge.append(list(np.zeros(plane.noOfWires,dtype=int)))
+
+    for track in tracks:
+        wires = fireWires(planes,track)
+        for planeNo, plane in enumerate(wires):
+            for wireNo in plane:
+                # TODO:  uncertainity later
+                charge[planeNo][wireNo] = np.random.normal(meanCharge, sigmaCharge)
+
+    return charge
+
+def measureCharge(wireList,chargeMatrix):
+    charges = []
+    chargeMatrix = list(itertools.chain(*chargeMatrix))
+
+    for wire in wireList:
+        charge = 0
+
+        for i in range(wire[0],wire[1]+1):
+            charge += chargeMatrix[i]
+
+        charges.append(charge)
+
+    return charges
+
 def rotate(point, angle):
     # counterClockwise turn of axis
     return Point(point.x * math.cos(angle) + point.y * (math.sin(angle)), point.x * (-math.sin(angle)) + point.y * math.cos(angle))
@@ -326,6 +357,7 @@ def main(argv):
     planes = generatePlaneInfo(wirePitches, volume, angles, wireTranslations)
 
     tracks = generateTracks(planes,volume)
+
     event = generateEvent(planes,tracks)
     event = mergeEvent(event)
 
@@ -333,11 +365,17 @@ def main(argv):
 
     wireList, matrix = generateMatrix(planes,cells)
 
-    # pprint(planes)
-    pprint(event)
+    chargeMatrix = generateCharge(planes,tracks)
+    charge = measureCharge(wireList,chargeMatrix)
 
-    for row in matrix:
-        print(row)
+    pprint(charge)
+
+    # pprint(event)
+
+    # pprint(planes)
+
+    # for row in matrix:
+    #     print(row)
 
 
 if __name__ == "__main__":
