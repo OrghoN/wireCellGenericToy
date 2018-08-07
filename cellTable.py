@@ -155,8 +155,8 @@ def generateTracks(planes,volume):
         point0 = Point(np.random.random_sample() * volume.width,
                        np.random.random_sample() * volume.height)
 
-        xOffset = point0.x + np.random.random_sample() * 30
-        yOffset = point0.y + np.random.random_sample() * 30
+        xOffset = point0.x + np.random.random_sample() * 300
+        yOffset = point0.y + np.random.random_sample() * 300
 
         if xOffset > volume.width:
             xOffset = volume.width
