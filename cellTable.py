@@ -155,6 +155,7 @@ def generateTracks(planes,volume):
         point0 = Point(np.random.random_sample() * volume.width,
                        np.random.random_sample() * volume.height)
 
+        #30 set as arbitrary max length of track
         xOffset = point0.x + np.random.random_sample() * 30
         yOffset = point0.y + np.random.random_sample() * 30
 
@@ -301,7 +302,9 @@ def generateMatrix(planes, cells):
 
     for cellNo, cell in enumerate(cells):
         for planeNo, wire in enumerate(cell.wires):
-            trueWire = (getTrueWireNo(planes,wire[0],planeNo),getTrueWireNo(planes,wire[0],planeNo))
+            # print("\033[91m",wire, "\033[0m")
+            trueWire = (getTrueWireNo(planes,wire[0],planeNo),getTrueWireNo(planes,wire[1],planeNo))
+            # print("\033[93m",trueWire, "\033[0m")
 
             if trueWire not in wires:
                 wires.append(trueWire)
@@ -324,7 +327,7 @@ def generateCharge(planes,tracks):
         for planeNo, plane in enumerate(wires):
             for wireNo in plane:
                 # TODO:  uncertainity later
-                charge[planeNo][wireNo] = np.random.normal(meanCharge, sigmaCharge)
+                charge[planeNo][wireNo] += np.random.normal(meanCharge, sigmaCharge)
 
     return charge
 
@@ -334,7 +337,7 @@ def measureCharge(wireList,chargeMatrix):
 
     for wire in wireList:
         charge = 0
-
+        test = []
         for i in range(wire[0],wire[1]+1):
             charge += chargeMatrix[i]
 
@@ -364,6 +367,8 @@ def main(argv):
     cells = generateCells(planes,event)
 
     wireList, matrix = generateMatrix(planes,cells)
+
+    # pprint(wireList)
 
     chargeMatrix = generateCharge(planes,tracks)
     charge = measureCharge(wireList,chargeMatrix)
