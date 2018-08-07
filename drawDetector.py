@@ -22,8 +22,8 @@ def makeCenterLines(plane, wires):
         # print(wireNo)
         dist = plane.pitch * wireNo + plane.pitch/2
 
-        if plane.translationFactor > 0:
-            point = Point(plane.translationFactor -
+        if plane.originTranslation > 0:
+            point = Point(plane.originTranslation -
                            (dist * (-plane.cos)), dist * plane.sin)
         else:
             point = Point(dist * plane.cos, dist * plane.sin)
@@ -98,16 +98,27 @@ def sortPoints(points):
 def main(argv):
     volume = DetectorVolume(1000.0, 1000.0)
     wirePitches = [5.0, 5.0, 5.0]
-    planes = cellTable.generatePlaneInfo(wirePitches, volume)
+    wireTranslations = [0.0,0.0,0.0]
+    angles = cellTable.generateAngles(len(wirePitches))
+    planes = cellTable.generatePlaneInfo(wirePitches, volume, angles, wireTranslations)
 
-    event = cellTable.generateEvent(planes,volume)
+    reco = False
+
+    tracks = cellTable.generateTracks(planes,volume)
+    event = cellTable.generateEvent(planes,tracks)
     event = cellTable.mergeEvent(event)
 
-    cells = cellTable.generateCells(planes,event)
+    cells = generateCells(planes,event)
+
+    # event = cellTable.mergeEvent(cellTable.fireWires(planes,[Point(500,500)]))
+
+    if reco:
+        cells = cellTable.generateCells(planes,event)
 
     # wireList, matrix = cellTable.generateMatrix(planes,cells)
 
     pprint(event)
+
 
     # for row in matrix:
     #     print(row)
@@ -126,20 +137,11 @@ def main(argv):
     drawnLines = makeEventLines(planes,event, True)
     drawnLines =drawEventLines(drawnLines,volume)
 
-    asMarker = True
-    drawnCells = drawCells(cells, asMarker)
+    if reco:
+        asMarker = False
+        drawnCells = drawCells(cells, asMarker)
 
-    # sorted = sortPoints(recoPoints)
-    # sortedx = np.array(list(map(lambda p: p[0], sorted)))
-    # sortedy = np.array(list(map(lambda p: p[1], sorted)))
-    #
-    # Cx = (ctypes.c_double * len(sorted))(*sortedx)
-    # Cy = (ctypes.c_double * len(sorted))(*sortedy)
-    #
-    # cell = root.TGeoPolygon(len(sorted))
-    # cell.SetXY(Cx, Cy)
-    # cell.FinishPolygon()
-    # pprint(cell.Area())
+
 
     c1 = root.TCanvas( "Detector", "Detector", 200, 10, 700, int(700*(volume.height/volume.width)) )
     c1.Range(0,0,volume.width,volume.height)
@@ -149,14 +151,15 @@ def main(argv):
     for line in drawnLines:
         line.Draw()
 
-    for marker in drawnCells:
-        if asMarker:
-            marker.SetMarkerColor(recoColor)
-        else:
-            marker.SetLineWidth(4)
-            # marker.SetLineStyle(2)
-            marker.SetLineColor(recoColor)
-        marker.Draw()
+    if reco:
+        for marker in drawnCells:
+            if asMarker:
+                marker.SetMarkerColor(recoColor)
+            else:
+                marker.SetLineWidth(4)
+                # marker.SetLineStyle(2)
+                marker.SetLineColor(recoColor)
+            marker.Draw()
 
     root.gApplication.Run()
 

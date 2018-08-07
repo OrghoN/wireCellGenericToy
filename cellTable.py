@@ -147,9 +147,9 @@ def fireWires(planes, track):
 
     return firedWires
 
+def generateTracks(planes,volume):
+    tracks = []
 
-def generateEvent(planes, volume):
-    event = []
     for i in range(0,np.random.randint(2,15)):
     # for i in range(0, 4):
         point0 = Point(np.random.random_sample() * volume.width,
@@ -165,9 +165,18 @@ def generateEvent(planes, volume):
 
         point1 = Point(xOffset, yOffset)
 
-        wires = fireWires(planes, [point0, point1])
+        tracks.append([point0,point1])
 
-        if i == 0:
+    return tracks
+
+
+
+def generateEvent(planes, tracks):
+    event = []
+    for trackNo, track in enumerate(tracks):
+        wires = fireWires(planes, track)
+
+        if trackNo == 0:
             event = wires
         event = [set(item[0]).union(item[1])
                  for item in list(zip(event, wires))]
@@ -313,14 +322,17 @@ def main(argv):
     wirePitches = [5.0, 5.0, 5.0]
     wireTranslations = [0.0,0.0,0.0]
     angles = generateAngles(len(wirePitches))
+
     planes = generatePlaneInfo(wirePitches, volume, angles, wireTranslations)
-    event = generateEvent(planes,volume)
+
+    tracks = generateTracks(planes,volume)
+    event = generateEvent(planes,tracks)
     event = mergeEvent(event)
+
     cells = generateCells(planes,event)
 
     wireList, matrix = generateMatrix(planes,cells)
 
-    # pprint(matrix)
     # pprint(planes)
     pprint(event)
 
