@@ -16,12 +16,13 @@ Line.__doc__ = '''A line defined by two points'''
 Line.point0.__doc__ = '''First Point'''
 Line.point1.__doc__ = '''Second Point'''
 
-PlaneInfo = namedtuple('PlaneInfo', ['angle', 'pitch', 'noOfWires', 'translationFactor', 'sin', 'cos', 'gradient'])
+PlaneInfo = namedtuple('PlaneInfo', ['angle', 'pitch', 'noOfWires', 'originTranslation', 'wireTranslation','sin', 'cos', 'gradient'])
 PlaneInfo.__doc__ = '''List of information about planes'''
 PlaneInfo.angle.__doc__ = '''angle by whitch plane is roatated'''
 PlaneInfo.pitch.__doc__ = '''wire pitch for the plane'''
 PlaneInfo.noOfWires.__doc__ = '''number of wires in the plane'''
-PlaneInfo.translationFactor.__doc__ = '''x offset for origin of the plane (y origin is always 0)'''
+PlaneInfo.originTranslation.__doc__ = '''x offset for origin of the plane (y origin is always 0)'''
+PlaneInfo.wireTranslation.__doc__ = '''x offset for the first wire from origin of plane'''
 PlaneInfo.sin.__doc__ = '''sin of the plane angle'''
 PlaneInfo.cos.__doc__ = '''cos of the plane angle'''
 PlaneInfo.gradient.__doc__ = '''gradient of the wires in plane'''
@@ -36,7 +37,16 @@ Cell.__doc__='''Merged Cell in Detector'''
 Cell.wires.__doc__='''binding wires of the cell'''
 Cell.points.__doc__='''points binding the cell'''
 
-def generatePlaneInfo(wirePitches, volume):
+def generateAngles(noOfPlanes):
+    individualAngle = math.pi/noOfPlanes
+    angles = []
+
+    for planeNo in range(noOfPlanes):
+        angles.append(individualAngle * (planeNo + 1))
+
+    return angles
+
+def generatePlaneInfo(wirePitches, volume, angles, wireTranslations):
     """Generates information about planes based on wire pitches and volume assuming equal angle between each plane and the next
 
     Parameters
@@ -52,37 +62,36 @@ def generatePlaneInfo(wirePitches, volume):
         List of information regarding the planes.
 
     """
-    individualAngle = math.pi / len(wirePitches)
     planes = []
 
     translationPoint = Point(volume.width, 0)
 
     for planeNo, pitch in enumerate(wirePitches):
         # basic angle calculations
-        angle = individualAngle * (planeNo + 1)
+        angle = angles[planeNo]
         cos = math.cos(angle)
         sin = math.sin(angle)
 
         # Origin and number of wire calculations
         if (rotate(translationPoint, angle).x < 0):
-            translationFactor = volume.width
+            originTranslation = volume.width
             noOfWires = math.floor(
-                (sin * volume.height - cos * translationFactor) / pitch)
+                (sin * volume.height - cos * originTranslation) / pitch)
         else:
-            translationFactor = 0
+            originTranslation = 0
             noOfWires = math.floor(
                 (cos * volume.width + sin * volume.height) / pitch)
 
         # gradient calculations
         if(math.isclose(angle, math.pi, rel_tol=1e-5)):
             gradient = "INF"
-        elif translationFactor == 0:
+        elif originTranslation == 0:
             gradient = math.tan(angle + math.pi / 2)
         else:
             gradient = math.tan(angle - math.pi / 2)
 
         planes.append(PlaneInfo(angle, pitch, noOfWires,
-                                translationFactor, sin, cos, gradient))
+                                originTranslation, wireTranslations[planeNo], sin, cos, gradient))
 
     return planes
 
@@ -103,7 +112,7 @@ def wireNumberFromPoint(plane, point):
         Wire number
 
     """
-    return round((plane.cos * point.x + plane.sin * point.y - plane.cos * plane.translationFactor) / plane.pitch)
+    return round((plane.cos * point.x + plane.sin * point.y - plane.cos * plane.originTranslation) / plane.pitch)
 
 def fireWires(planes, track):
     """Show which wires have been hit for a given track
@@ -186,10 +195,10 @@ def makeLines(plane, wires):
     dist0 = plane.pitch * wires[0]
     dist1 = plane.pitch * wires[1] + 1
 
-    if plane.translationFactor > 0:
-        point0 = Point(plane.translationFactor -
+    if plane.originTranslation > 0:
+        point0 = Point(plane.originTranslation -
                        (dist0 * (-plane.cos)), dist0 * plane.sin)
-        point1 = Point(plane.translationFactor -
+        point1 = Point(plane.originTranslation -
                        (dist1 * (-plane.cos)), dist1 * plane.sin)
     else:
         point0 = Point(dist0 * plane.cos, dist0 * plane.sin)
@@ -302,7 +311,9 @@ def rotate(point, angle):
 def main(argv):
     volume = DetectorVolume(1000.0, 1000.0)
     wirePitches = [5.0, 5.0, 5.0]
-    planes = generatePlaneInfo(wirePitches, volume)
+    wireTranslations = [0.0,0.0,0.0]
+    angles = generateAngles(len(wirePitches))
+    planes = generatePlaneInfo(wirePitches, volume, angles, wireTranslations)
     event = generateEvent(planes,volume)
     event = mergeEvent(event)
     cells = generateCells(planes,event)
