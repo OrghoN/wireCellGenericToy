@@ -39,9 +39,10 @@ Cell.__doc__='''Merged Cell in Detector'''
 Cell.wires.__doc__='''binding wires of the Cell'''
 Cell.points.__doc__='''points binding the Cell'''
 
-Blob = namedtuple('Blob', ['charge', 'points'])
+Blob = namedtuple('Blob', ['charge', 'wires', 'points'])
 Blob.__doc__ ='''Blob detected in tomographic slice'''
 Blob.charge.__doc__ ='''Charge Associated with the Blob'''
+Blob.wires.__doc__ = '''Wires that bind the Blob'''
 Blob.points.__doc__ ='''Points that define the ConvexHull of the blob'''
 
 def generateAngles(noOfPlanes):
@@ -177,7 +178,7 @@ def generateBlobs(planes,volume):
         meanCharge, sigmaCharge = 5, 0.5
         charge = np.random.normal(meanCharge, sigmaCharge)
 
-        blobs.append(Blob(charge, [point0,point1]))
+        blobs.append(Blob(charge, list(itertools.chain(*mergeEvent(fireWires(planes,[point0,point1])))), [point0,point1]))
 
     return blobs
 
@@ -259,7 +260,7 @@ def sortPoints(points):
     sortedPoints = []
     hull = ConvexHull(points)
 
-    for pointNo in reversed(hull.vertices):
+    for pointNo in (hull.vertices):
         sortedPoints.append(points[pointNo])
         # sortedPoints.append(hull.points[pointNo])
 
@@ -335,42 +336,13 @@ def generateMatrix(planes, cells):
 
     return wires, np.matrix(matrix)
 
-def is_left(P0, P1, P2):
-    return (P1[0] - P0[0]) * (P2[1] - P0[1]) - (P2[0] - P0[0]) * (P1[1] - P0[1])
-
-def pointDistanceSQ(P0,P1):
-    return (P1.x-P0.x)*(P1.x-P0.x)+(P1.y-P0.y)*(P1.y-P0.y)
-
-
 def blobInCell(blob,cell):
-    inside = False
-
-    blobCenter = Point(*tuple(map(np.mean,zip(*blob.points))))
-    # blobCenter = blob.points[0]
-
-
-    P = blobCenter
-    V = cell.points
-
-    wn = 0   # the winding number counter
-
-    # repeat the first vertex at end
-    V = tuple(V[:]) + (V[0],)
-    # loop through all edges of the polygon
-    for i in range(len(V)-1):     # edge from V[i] to V[i+1]
-        if math.isclose(pointDistanceSQ(V[i],P)+pointDistanceSQ(V[i+1],P),pointDistanceSQ(V[i],V[i+1]),rel_tol=1e-2):
-            return True
-        elif math.isclose(V[i].x,P.x,rel_tol=1e-2) and math.isclose(V[i].y,P.y,rel_tol=1e-2):
-            return True
-        elif V[i][1] <= P[1]:        # start y <= P[1]
-            if V[i+1][1] > P[1]:     # an upward crossing
-                if is_left(V[i], V[i+1], P) > 0: # P left of edge
-                    wn += 1           # have a valid up intersect
-        else:                      # start y > P[1] (no test needed)
-            if V[i+1][1] <= P[1]:    # a downward crossing
-                if is_left(V[i], V[i+1], P) < 0: # P right of edge
-                    wn -= 1           # have a valid down intersect
-    return wn != 0
+    for planeNo in range(len(cell.wires)):
+        middle = np.mean(blob.wires[planeNo])
+        #TODO: Fix Approximation at later time
+        if middle<cell.wires[planeNo][0] or middle>cell.wires[planeNo][1]:
+            return False
+    return True
 
 def generateTrueCellMatrix(blobs,cells):
     matrix = list(np.zeros((len(cells),1)))
@@ -450,8 +422,8 @@ def main(argv):
     print("\033[93m","Number of Cells:", np.shape(geomMatrix)[1],"\033[0m")
 
     pprint(trueCellCharge)
-    # pprint(geomMatrix)
-    # pprint(trueWireCharge)
+    pprint(geomMatrix)
+    pprint(trueWireCharge)
 
     # chargeSolving = linear_model.Lasso()
     # chargeSolving.fit(matrix,charge)
