@@ -99,11 +99,23 @@ def drawCells(cells, asMarker):
             drawnCells.append(drawnCell)
     return drawnCells
 
+def drawCellNumbers(cells):
+    numbers = []
+
+    for cellNo, cell in enumerate(cells):
+        center = np.mean(cell.points,axis=0)
+        numbers.append(root.TText(center[0],center[1],str(cellNo)))
+
+
+    return numbers
+
 def sortPoints(points):
+    if len(points)<=2:
+        return points
     sortedPoints = []
     hull = ConvexHull(points)
 
-    for pointNo in reversed(hull.vertices):
+    for pointNo in (hull.vertices):
         sortedPoints.append(points[pointNo])
         # sortedPoints.append(hull.points[pointNo])
 
@@ -122,8 +134,10 @@ def main(argv):
     reco = True
     trueBlobs = True
     asMarker = False
+    cellNumbering = True
 
     blobs = cellTable.generateBlobs(planes,volume)
+
     # print(blobs)
 
     event = cellTable.generateEvent(planes,blobs)
@@ -143,6 +157,8 @@ def main(argv):
 
         trueCellCharge = cellTable.generateTrueCellMatrix(blobs,cells)
         trueWireCharge = geomMatrix * trueCellCharge
+
+
 
 
     print("\033[93m","Number of true Blobs:",len(blobs),"\033[0m")
@@ -168,8 +184,11 @@ def main(argv):
     if reco:
         drawnCells = drawCells(cells, asMarker)
 
-    if trueBlobs:
-        drawnBlobs = drawBlobs(blobs)
+        if cellNumbering:
+            cellText = drawCellNumbers(cells)
+
+        if trueBlobs:
+            drawnBlobs = drawBlobs(blobs)
 
 
 
@@ -198,11 +217,15 @@ def main(argv):
                     marker.SetLineColor(recoColor)
                     marker.Draw()
         print("Cells:",cellCount)
-    if trueBlobs:
-        for marker in drawnBlobs:
-            marker.SetLineWidth(2)
-            marker.SetLineColor(trueColor)
-            marker.Draw()
+        if trueBlobs:
+            for marker in drawnBlobs:
+                marker.SetLineWidth(2)
+                marker.SetLineColor(trueColor)
+                marker.Draw()
+        if cellNumbering:
+            for text in cellText:
+                # text.SetTextSize(2)
+                text.Draw()
 
     root.gApplication.Run()
 
