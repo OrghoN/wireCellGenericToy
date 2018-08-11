@@ -1,9 +1,11 @@
 from collections import namedtuple
 from pprint import pprint
+from sklearn import linear_model
 import sys
 import numpy as np
 import itertools
 import math
+from scipy.spatial import ConvexHull
 
 # define data Structures
 Point = namedtuple('Point', ['x', 'y'])
@@ -34,8 +36,13 @@ DetectorVolume.height.__doc__ = '''height of detector'''
 
 Cell = namedtuple('Cell', ['wires','points'])
 Cell.__doc__='''Merged Cell in Detector'''
-Cell.wires.__doc__='''binding wires of the cell'''
-Cell.points.__doc__='''points binding the cell'''
+Cell.wires.__doc__='''binding wires of the Cell'''
+Cell.points.__doc__='''points binding the Cell'''
+
+Blob = namedtuple('Blob', ['charge', 'points'])
+Blob.__doc__ ='''Blob detected in tomographic slice'''
+Blob.charge.__doc__ ='''Charge Associated with the Blob'''
+Blob.points.__doc__ ='''Points that define the ConvexHull of the blob'''
 
 def generateAngles(noOfPlanes):
     individualAngle = math.pi/noOfPlanes
@@ -114,15 +121,15 @@ def wireNumberFromPoint(plane, point):
     """
     return round((plane.cos * point.x + plane.sin * point.y - plane.cos * plane.originTranslation) / plane.pitch)
 
-def fireWires(planes, track):
-    """Show which wires have been hit for a given track
+def fireWires(planes, points):
+    """Show which wires have been hit for a given blob
 
     Parameters
     ----------
     planes : list of PlaneInfo
         A list containing information for all the planes in the detector
-    track : list of Points
-        List containing the points that define the convex hull of a blob
+    points : list of points
+        points defining ConvexHull of blob
 
     Returns
     -------
@@ -133,7 +140,7 @@ def fireWires(planes, track):
     firedWires = []
 
     for planeNo, plane in enumerate(planes):
-        for pointNo, point in enumerate(track):
+        for pointNo, point in enumerate(points):
             wireNo = wireNumberFromPoint(plane, point)
             if pointNo == 0:
                 min = wireNo
@@ -147,15 +154,15 @@ def fireWires(planes, track):
 
     return firedWires
 
-def generateTracks(planes,volume):
-    tracks = []
+def generateBlobs(planes,volume):
+    blobs = []
 
     for i in range(0,np.random.randint(2,15)):
     # for i in range(0, 4):
         point0 = Point(np.random.random_sample() * volume.width,
                        np.random.random_sample() * volume.height)
 
-        #30 set as arbitrary max length of track
+        #30 set as arbitrary max length of blob
         xOffset = point0.x + np.random.random_sample() * 30
         yOffset = point0.y + np.random.random_sample() * 30
 
@@ -166,18 +173,22 @@ def generateTracks(planes,volume):
 
         point1 = Point(xOffset, yOffset)
 
-        tracks.append([point0,point1])
+        #charge calculations
+        meanCharge, sigmaCharge = 5, 0.5
+        charge = np.random.normal(meanCharge, sigmaCharge)
 
-    return tracks
+        blobs.append(Blob(charge, [point0,point1]))
+
+    return blobs
 
 
 
-def generateEvent(planes, tracks):
+def generateEvent(planes, blobs):
     event = []
-    for trackNo, track in enumerate(tracks):
-        wires = fireWires(planes, track)
+    for blobNo, blob in enumerate(blobs):
+        wires = fireWires(planes, blob.points)
 
-        if trackNo == 0:
+        if blobNo == 0:
             event = wires
         event = [set(item[0]).union(item[1])
                  for item in list(zip(event, wires))]
@@ -244,6 +255,16 @@ def wireIntersection(plane0, wire0, plane1, wire1):
 
     return points
 
+def sortPoints(points):
+    sortedPoints = []
+    hull = ConvexHull(points)
+
+    for pointNo in reversed(hull.vertices):
+        sortedPoints.append(points[pointNo])
+        # sortedPoints.append(hull.points[pointNo])
+
+    return sortedPoints
+
 def checkCell(planes, wires):
     potentialPoints = []
     points = []
@@ -271,7 +292,7 @@ def checkCell(planes, wires):
     if len(points) <=2:
         return Cell(False, False)
     else:
-        return Cell(list(itertools.chain(*mergeEvent(fireWires(planes,points)))),points)
+        return Cell(list(itertools.chain(*mergeEvent(fireWires(planes,points)))),sortPoints(points))
 
 def generateCells(planes,event):
     cells = []
@@ -312,24 +333,71 @@ def generateMatrix(planes, cells):
 
             matrix[wires.index(trueWire)][cellNo] = 1
 
-    return wires, matrix
+    return wires, np.matrix(matrix)
 
-def generateCharge(planes,tracks):
-    charge = []
+def is_left(P0, P1, P2):
+    return (P1[0] - P0[0]) * (P2[1] - P0[1]) - (P2[0] - P0[0]) * (P1[1] - P0[1])
 
-    meanCharge, sigmaCharge = 5, 0.1
+def pointDistanceSQ(P0,P1):
+    return (P1.x-P0.x)*(P1.x-P0.x)+(P1.y-P0.y)*(P1.y-P0.y)
+
+
+def blobInCell(blob,cell):
+    inside = False
+
+    blobCenter = Point(*tuple(map(np.mean,zip(*blob.points))))
+    # blobCenter = blob.points[0]
+
+
+    P = blobCenter
+    V = cell.points
+
+    wn = 0   # the winding number counter
+
+    # repeat the first vertex at end
+    V = tuple(V[:]) + (V[0],)
+    # loop through all edges of the polygon
+    for i in range(len(V)-1):     # edge from V[i] to V[i+1]
+        if math.isclose(pointDistanceSQ(V[i],P)+pointDistanceSQ(V[i+1],P),pointDistanceSQ(V[i],V[i+1]),rel_tol=1e-2):
+            return True
+        elif math.isclose(V[i].x,P.x,rel_tol=1e-2) and math.isclose(V[i].y,P.y,rel_tol=1e-2):
+            return True
+        elif V[i][1] <= P[1]:        # start y <= P[1]
+            if V[i+1][1] > P[1]:     # an upward crossing
+                if is_left(V[i], V[i+1], P) > 0: # P left of edge
+                    wn += 1           # have a valid up intersect
+        else:                      # start y > P[1] (no test needed)
+            if V[i+1][1] <= P[1]:    # a downward crossing
+                if is_left(V[i], V[i+1], P) < 0: # P right of edge
+                    wn -= 1           # have a valid down intersect
+    return wn != 0
+
+def generateTrueCellMatrix(blobs,cells):
+    matrix = list(np.zeros((len(cells),1)))
+
+    for blob in blobs:
+        for cellNo, cell in enumerate(cells):
+            if(blobInCell(blob,cell)):
+                # matrix[cellNo] = True
+                matrix[cellNo][0] += blob.charge
+                break
+
+    return np.matrix(matrix)
+
+def generateCharge(planes,blobs):
+    chargeMatrix = []
 
     for plane in planes:
-        charge.append(list(np.zeros(plane.noOfWires,dtype=int)))
+        chargeMatrix.append(list(np.zeros(plane.noOfWires,dtype=int)))
 
-    for track in tracks:
-        wires = fireWires(planes,track)
+    for blob in blobs:
+        wires = fireWires(planes,blob.points)
         for planeNo, plane in enumerate(wires):
+            charge = blob.charge/(len(plane))
             for wireNo in plane:
-                # TODO:  uncertainity later
-                charge[planeNo][wireNo] += np.random.normal(meanCharge, sigmaCharge)
+                chargeMatrix[planeNo][wireNo] += charge
 
-    return charge
+    return chargeMatrix
 
 def measureCharge(wireList,chargeMatrix):
     charges = []
@@ -343,7 +411,7 @@ def measureCharge(wireList,chargeMatrix):
 
         charges.append(charge)
 
-    return charges
+    return np.matrix(charges)
 
 def rotate(point, angle):
     # counterClockwise turn of axis
@@ -359,28 +427,42 @@ def main(argv):
 
     planes = generatePlaneInfo(wirePitches, volume, angles, wireTranslations)
 
-    tracks = generateTracks(planes,volume)
+    blobs = generateBlobs(planes,volume)
 
-    event = generateEvent(planes,tracks)
+    event = generateEvent(planes,blobs)
     event = mergeEvent(event)
 
     cells = generateCells(planes,event)
 
-    wireList, matrix = generateMatrix(planes,cells)
+    wireList, geomMatrix = generateMatrix(planes,cells)
 
     # pprint(wireList)
 
-    chargeMatrix = generateCharge(planes,tracks)
+    chargeMatrix = generateCharge(planes,blobs)
     charge = measureCharge(wireList,chargeMatrix)
 
-    pprint(charge)
+    trueCellCharge = generateTrueCellMatrix(blobs,cells)
+    trueWireCharge = geomMatrix * trueCellCharge
 
+
+    print("\033[93m","Number of true Blobs:",len(blobs),"\033[0m")
+    print("\033[93m","Number of Merged Wires:", np.shape(geomMatrix)[0],"\033[0m")
+    print("\033[93m","Number of Cells:", np.shape(geomMatrix)[1],"\033[0m")
+
+    pprint(trueCellCharge)
+    # pprint(geomMatrix)
+    # pprint(trueWireCharge)
+
+    # chargeSolving = linear_model.Lasso()
+    # chargeSolving.fit(matrix,charge)
+    #
+    #
+    #
+    # print("\033[91m",charge,"\033[0m")
+    # print("\033[92m",chargeSolving.coef_,"\033[0m")
     # pprint(event)
 
     # pprint(planes)
-
-    # for row in matrix:
-    #     print(row)
 
 
 if __name__ == "__main__":
