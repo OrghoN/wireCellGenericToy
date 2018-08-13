@@ -19,7 +19,6 @@ def makeCenterLines(plane, wires):
     lines = []
 
     for wireNo in range(wires[0], wires[1]+1):
-        print("wireNo",wireNo)
         dist = plane.pitch * wireNo + plane.pitch/2
 
         if plane.originTranslation > 0:
@@ -85,15 +84,10 @@ def drawBlobs(blobs):
     drawnBlobs = []
 
     for blob in blobs:
-        if len(blob)>2:
-            sortedPoints = sortPoints(blob.points)
+        for i in range(1, len(blob.points)):
+            drawnBlobs.append(root.TLine(blob.points[i-1].x,blob.points[i-1].y,blob.points[i].x,blob.points[i].y))
 
-            for i in range(1, len(sortedPoints)):
-                drawnBlobs.append(root.TLine(sortedPoints[i-1].x,sortedPoints[i-1].y,sortedPoints[i].x,sortedPoints[i].y))
-
-            drawnBlobs.append(root.TLine(sortedPoints[-1].x,sortedPoints[-1].y,sortedPoints[0].x,sortedPoints[0].y))
-        else:
-            drawnBlobs.append(root.TLine(blob.points[-1].x,blob.points[-1].y,blob.points[0].x,blob.points[0].y))
+        drawnBlobs.append(root.TLine(blob.points[-1].x,blob.points[-1].y,blob.points[0].x,blob.points[0].y))
 
     return drawnBlobs
 
@@ -125,18 +119,13 @@ def drawCellNumbers(cells):
 
     return numbers
 
-def sortPoints(points):
-    if len(points)<=2:
-        return points
-    sortedPoints = []
-    hull = ConvexHull(points)
+def drawCellPointNumbers(cell):
+    numbers = []
 
-    for pointNo in (hull.vertices):
-        sortedPoints.append(points[pointNo])
-        # sortedPoints.append(hull.points[pointNo])
+    for pointNo, point in enumerate(cell.points):
+        numbers.append(root.TText(point.x,point.y,str(pointNo)))
 
-    return sortedPoints
-
+    return numbers
 ################################################################################
 
 def main(argv):
@@ -149,11 +138,11 @@ def main(argv):
 
     reco = True
     trueBlobs = True
-    asMarker = False
-    cellNumbering = False
+    asMarker = True
+    cellNumbering = True
     useCenterLines = "both"
 
-    blobs = cellTable.generateBlobs(planes,volume)
+    # blobs = cellTable.generateBlobs(planes,volume)
 
     # print(blobs)
     blobs = [Blob(charge=4.3817063682104616, wires=[(107, 109), (48, 49), (41, 41)], points=[Point(x=794.5779845342349, y=161.06557350572535), Point(x=797.0568842581971, y=168.14059321103935)])]
@@ -163,7 +152,7 @@ def main(argv):
 
     event = cellTable.generateEvent(planes,blobs)
     event = cellTable.mergeEvent(event)
-    # pprint(event)
+    print("\033[94m","Event:",event,"\033[0m")
 
     # event = cellTable.mergeEvent(cellTable.fireWires(planes,[Point(500,500)]))
 
@@ -179,7 +168,7 @@ def main(argv):
         charge = cellTable.measureCharge(wireList,chargeMatrix)
 
         trueCellCharge = cellTable.generateTrueCellMatrix(blobs,cells)
-        trueWireCharge = geomMatrix * trueCellCharge
+        # trueWireCharge = geomMatrix * trueCellCharge
 
 
         print("\033[93m","Number of true Blobs:",len(blobs),"\033[0m")
@@ -200,26 +189,17 @@ def main(argv):
 
 
     drawnLines = makeEventLines(planes,event, useCenterLines)
-    # plNo = 2
-    # wNo  = (1,3)
-    # drawnLines = []
-    # centerLines = makeCenterLines(planes[plNo],wNo)
-    # centerLines = list(map(lambda line: (line,True),centerLines))
-    # drawnLines.extend(centerLines)
-    # borderLines = cellTable.makeLines(planes[plNo],wNo)
-    # borderLines = list(map(lambda line: (line,False),borderLines))
-    # drawnLines.extend(borderLines)
-    # pprint(drawnLines)
     drawnLines =drawEventLines(drawnLines,volume)
 
     if reco:
         drawnCells = drawCells(cells, asMarker)
 
         if cellNumbering:
-            cellText = drawCellNumbers(cells)
+            # cellText = drawCellNumbers(cells)
+            cellText = drawCellPointNumbers(cells[0])
 
-        if trueBlobs:
-            drawnBlobs = drawBlobs(blobs)
+    if trueBlobs:
+        drawnBlobs = drawBlobs(blobs)
 
 
 
@@ -250,15 +230,15 @@ def main(argv):
                     marker.SetLineColor(recoColor)
                     marker.Draw()
         # print("Cells:",cellCount)
-        if trueBlobs:
-            for marker in drawnBlobs:
-                marker.SetLineWidth(2)
-                marker.SetLineColor(trueColor)
-                marker.Draw()
         if cellNumbering:
             for text in cellText:
                 # text.SetTextSize(2)
                 text.Draw()
+    if trueBlobs:
+        for marker in drawnBlobs:
+            marker.SetLineWidth(2)
+            marker.SetLineColor(trueColor)
+            marker.Draw()
 
     root.gApplication.Run()
 
