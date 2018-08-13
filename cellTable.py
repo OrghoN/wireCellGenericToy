@@ -215,7 +215,7 @@ def mergeEvent(event):
 
 def makeLines(plane, wires):
     dist0 = plane.pitch * wires[0]
-    dist1 = plane.pitch * wires[1] + 1
+    dist1 = plane.pitch * (wires[1] + 1)
 
     if plane.originTranslation > 0:
         point0 = Point(plane.originTranslation -
@@ -270,9 +270,10 @@ def checkCell(planes, wires):
     potentialPoints = []
     points = []
 
+
     for plane0 in range(0,len(wires)):
         for plane1 in  range(plane0+1,len(wires)):
-            # print(plane0,plane1)
+            print("Planes",plane0,plane1)
             potentialPoints.extend(wireIntersection(planes[plane0], wires[plane0], planes[plane1], wires[plane1]))
 
     for point in potentialPoints:
@@ -286,9 +287,13 @@ def checkCell(planes, wires):
             # else:
                 # print("\033[92m",wires[planeNo][0]," | ", wire, " | ", wires[planeNo][1],"\033[0m")
         if isPointInside:
+            print("\033[92m",wireNumberFromPoint(planes[0], point), wireNumberFromPoint(planes[1], point), wireNumberFromPoint(planes[2], point),point,"\033[0m")
             points.append(point)
+        else:
+            print("\033[91m",wireNumberFromPoint(planes[0], point), wireNumberFromPoint(planes[1], point), wireNumberFromPoint(planes[2], point),point,"\033[0m")
 
-    # print(points)
+    print("Potential Points",len(potentialPoints))
+    print("Points",len(points))
 
     if len(points) <=2:
         return Cell(False, False)
@@ -338,9 +343,8 @@ def generateMatrix(planes, cells):
 
 def blobInCell(blob,cell):
     for planeNo in range(len(cell.wires)):
-        middle = np.mean(blob.wires[planeNo])
-        #TODO: Fix Approximation at later time
-        if middle<cell.wires[planeNo][0] or middle>cell.wires[planeNo][1]:
+        print(blob.wires[planeNo],"||",cell.wires[planeNo])
+        if blob.wires[planeNo][0]<cell.wires[planeNo][0] or blob.wires[planeNo][1]>cell.wires[planeNo][1]:
             return False
     return True
 
@@ -422,8 +426,8 @@ def main(argv):
     print("\033[93m","Number of Cells:", np.shape(geomMatrix)[1],"\033[0m")
 
     pprint(trueCellCharge)
-    pprint(geomMatrix)
-    pprint(trueWireCharge)
+    # pprint(geomMatrix)
+    # pprint(trueWireCharge)
 
     # chargeSolving = linear_model.Lasso()
     # chargeSolving.fit(matrix,charge)
