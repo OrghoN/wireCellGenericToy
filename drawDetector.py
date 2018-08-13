@@ -19,7 +19,7 @@ def makeCenterLines(plane, wires):
     lines = []
 
     for wireNo in range(wires[0], wires[1]+1):
-        # print(wireNo)
+        print("wireNo",wireNo)
         dist = plane.pitch * wireNo + plane.pitch/2
 
         if plane.originTranslation > 0:
@@ -42,10 +42,21 @@ def makeEventLines(planes, event, useCenterLines):
 
     for planeNo, plane in enumerate(event):
         for wire in plane:
-            if useCenterLines:
-                lines.extend(makeCenterLines(planes[planeNo],wire))
+            if (useCenterLines == "both"):
+                centerLines = makeCenterLines(planes[planeNo],wire)
+                centerLines = list(map(lambda line: (line,True),centerLines))
+                lines.extend(centerLines)
+                borderLines = cellTable.makeLines(planes[planeNo],wire)
+                borderLines = list(map(lambda line: (line,False),borderLines))
+                lines.extend(borderLines)
+            elif useCenterLines:
+                centerLines = makeCenterLines(planes[planeNo],wire)
+                centerLines = list(map(lambda line: (line,True),centerLines))
+                lines.extend(centerLines)
             else:
-                lines.extend(cellTable.makeLines(planes[planeNo],wire))
+                borderLines = cellTable.makeLines(planes[planeNo],wire)
+                borderLines = list(map(lambda line: (line,False),borderLines))
+                lines.extend(borderLines)
     return lines
 
 def drawEventLines(lines, volume):
@@ -55,13 +66,18 @@ def drawEventLines(lines, volume):
     x1 = volume.width
 
     for lineNo, line in enumerate(lines):
-        if(math.isclose(line[0].x, line[1].x, rel_tol=1e-5)):
-            drawLines.append(root.TLine(line[0].x,0,line[0].x,volume.height))
+        if(math.isclose(line[0][0].x, line[0][1].x, rel_tol=1e-5)):
+            drawLine = root.TLine(line[0][0].x,0,line[0][0].x,volume.height)
         else:
-            gradient = (line[1].y-line[0].y)/(line[1].x-line[0].x)
-            y0 = gradient * x0 - gradient * line[0].x + line[0].y
-            y1 = gradient * x1 - gradient * line[0].x + line[0].y
-            drawLines.append(root.TLine(x0,y0,x1,y1))
+            gradient = (line[0][1].y-line[0][0].y)/(line[0][1].x-line[0][0].x)
+            y0 = gradient * x0 - gradient * line[0][0].x + line[0][0].y
+            y1 = gradient * x1 - gradient * line[0][0].x + line[0][0].y
+            drawLine = root.TLine(x0,y0,x1,y1)
+
+        if line[1]:
+            drawLine.SetLineColor(root.kBlue)
+            drawLine.SetLineStyle(2)
+        drawLines.append(drawLine)
 
     return drawLines
 
@@ -134,14 +150,20 @@ def main(argv):
     reco = True
     trueBlobs = True
     asMarker = False
-    cellNumbering = True
+    cellNumbering = False
+    useCenterLines = "both"
 
     blobs = cellTable.generateBlobs(planes,volume)
 
     # print(blobs)
+    blobs = [Blob(charge=4.3817063682104616, wires=[(107, 109), (48, 49), (41, 41)], points=[Point(x=794.5779845342349, y=161.06557350572535), Point(x=797.0568842581971, y=168.14059321103935)])]
+    # for point in blobs[0].points:
+    #     print("\033[94m",cellTable.wireNumberFromPoint(planes[0], point), cellTable.wireNumberFromPoint(planes[1], point), cellTable.wireNumberFromPoint(planes[2], point),"\033[0m")
+
 
     event = cellTable.generateEvent(planes,blobs)
     event = cellTable.mergeEvent(event)
+    # pprint(event)
 
     # event = cellTable.mergeEvent(cellTable.fireWires(planes,[Point(500,500)]))
 
@@ -149,6 +171,7 @@ def main(argv):
 
     if reco:
         cells = cellTable.generateCells(planes,event)
+        # pprint(cells[0].wires)
 
         wireList, geomMatrix = cellTable.generateMatrix(planes,cells)
 
@@ -159,11 +182,9 @@ def main(argv):
         trueWireCharge = geomMatrix * trueCellCharge
 
 
-
-
-    print("\033[93m","Number of true Blobs:",len(blobs),"\033[0m")
-    print("\033[93m","Number of Merged Wires:", np.shape(geomMatrix)[0],"\033[0m")
-    print("\033[93m","Number of Cells:", np.shape(geomMatrix)[1],"\033[0m")
+        print("\033[93m","Number of true Blobs:",len(blobs),"\033[0m")
+        print("\033[93m","Number of Merged Wires:", np.shape(geomMatrix)[0],"\033[0m")
+        print("\033[93m","Number of Cells:", np.shape(geomMatrix)[1],"\033[0m")
 
 
     # pprint(event)
@@ -178,7 +199,17 @@ def main(argv):
 ########  ##     ## ##     ##  ###  ###  #### ##    ##  ######
 
 
-    drawnLines = makeEventLines(planes,event, True)
+    drawnLines = makeEventLines(planes,event, useCenterLines)
+    # plNo = 2
+    # wNo  = (1,3)
+    # drawnLines = []
+    # centerLines = makeCenterLines(planes[plNo],wNo)
+    # centerLines = list(map(lambda line: (line,True),centerLines))
+    # drawnLines.extend(centerLines)
+    # borderLines = cellTable.makeLines(planes[plNo],wNo)
+    # borderLines = list(map(lambda line: (line,False),borderLines))
+    # drawnLines.extend(borderLines)
+    # pprint(drawnLines)
     drawnLines =drawEventLines(drawnLines,volume)
 
     if reco:
@@ -193,7 +224,9 @@ def main(argv):
 
 
     c1 = root.TCanvas( "Detector", "Detector", 200, 10, 700, int(700*(volume.height/volume.width)) )
-    c1.Range(0,0,volume.width,volume.height)
+    # c1.Range(0,0,volume.width,volume.height)
+    # c1.Range(volume.width-25,0,volume.width,volume.height)
+    c1.Range(780,150,810,180)
 
     trueColor = root.kGreen
 
@@ -216,7 +249,7 @@ def main(argv):
                     marker.SetLineWidth(4)
                     marker.SetLineColor(recoColor)
                     marker.Draw()
-        print("Cells:",cellCount)
+        # print("Cells:",cellCount)
         if trueBlobs:
             for marker in drawnBlobs:
                 marker.SetLineWidth(2)
