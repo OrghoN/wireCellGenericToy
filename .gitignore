@@ -101,3 +101,6 @@ CTestTestfile.cmake
 # Kernel Module Compile Results
 *.mod*
 *.cmd
+
+# Python ByteCode
+*.pyc
