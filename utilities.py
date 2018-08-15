@@ -1,5 +1,6 @@
 #External Dependencies
 import math
+import numpy as np
 
 #internal Dependencies
 from dataTypes import *
@@ -50,3 +51,21 @@ def generatePlaneInfo(wirePitches, volume, angles, wireTranslations):
                                 originTranslation, wireTranslations[planeNo], sin, cos, gradient))
 
     return planes
+
+def wireNumberFromPoint(plane, point):
+    """Generates the wire number for a point given a certain plane
+
+    Parameters
+    ----------
+    plane : PlaneInfo
+        Plane information for the plane the wire number is for
+    point : Point
+        The point being queried
+
+    Returns
+    -------
+    int
+        Wire number
+
+    """
+    return math.floor((plane.cos * point.x + plane.sin * point.y - plane.cos * plane.originTranslation) / plane.pitch)
