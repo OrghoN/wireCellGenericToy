@@ -1,3 +1,8 @@
+#Extensionless files
+*
+!/**/
+!*.*
+
 # PDF
 *.pdf
 
@@ -75,11 +80,6 @@
 *.i*86
 *.x86_64
 *.hex
-
-#Extensionless files
-*
-!/**/
-!*.*
 
 #cmake
 CMakeCache.txt
