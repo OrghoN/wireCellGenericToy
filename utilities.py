@@ -4,11 +4,6 @@ import math
 #internal Dependencies
 from dataTypes import *
 
-def rotate(point, angle):
-    # counterClockwise turn of axis
-    return Point(point.x * math.cos(angle) + point.y * (math.sin(angle)), point.x * (-math.sin(angle)) + point.y * math.cos(angle))
-
-
 def generatePlaneInfo(wirePitches, volume, angles, wireTranslations):
     """Generates information about planes based on wire pitches and volume assuming equal angle between each plane and the next
 
@@ -27,8 +22,6 @@ def generatePlaneInfo(wirePitches, volume, angles, wireTranslations):
     """
     planes = []
 
-    translationPoint = Point(volume.width, 0)
-
     for planeNo, pitch in enumerate(wirePitches):
         # basic angle calculations
         angle = angles[planeNo]
@@ -36,7 +29,7 @@ def generatePlaneInfo(wirePitches, volume, angles, wireTranslations):
         sin = math.sin(angle)
 
         # Origin and number of wire calculations
-        if (rotate(translationPoint, angle).x < 0):
+        if (volume.width * math.cos(angle) < 0):
             originTranslation = volume.width
             noOfWires = math.floor(
                 (sin * volume.height - cos * originTranslation) / pitch)

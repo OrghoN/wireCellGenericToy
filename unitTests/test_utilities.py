@@ -1,6 +1,6 @@
 #add parent directory to import path
-import sys
-sys.path.insert(0,'..')
+import os.path, sys
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
 
 #Internal Dependencies
 import utilities
