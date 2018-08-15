@@ -34,3 +34,11 @@ def test_wireNumberFromPoint():
     for pointNo, point in enumerate(points):
         for planeNo, plane in enumerate(planes):
             assert utilities.wireNumberFromPoint(plane, point) == ans[pointNo][planeNo]
+
+def test_pointInWire():
+    plane = PlaneInfo(angle=3.141592653589793, pitch=5.0, noOfWires=200, originTranslation=1000.0, wireTranslation=0.0, sin=1.2246467991473532e-16, cos=-1.0, gradient='INF')
+    points = [Point(995,500),Point(990,500),Point(985,500),Point(980,500),Point(975,500)]
+
+    for pointNo, point in enumerate(points):
+        assert utilities.pointInWire(plane,point,pointNo)
+        assert utilities.pointInWire(plane,point,pointNo+1)

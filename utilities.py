@@ -69,3 +69,12 @@ def wireNumberFromPoint(plane, point):
 
     """
     return math.floor((plane.cos * point.x + plane.sin * point.y - plane.cos * plane.originTranslation) / plane.pitch)
+
+def pointInWire(plane,point,wire):
+    wireNo = (plane.cos * point.x + plane.sin * point.y - plane.cos * plane.originTranslation) / plane.pitch
+    print(wireNo)
+
+    if(math.isclose(wireNo,wire-1,rel_tol=1e-5) or math.isclose(wireNo,wire+1,rel_tol=1e-5) or math.floor(wireNo) == wire):
+        return True
+
+    return False
