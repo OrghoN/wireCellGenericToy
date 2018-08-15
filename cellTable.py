@@ -120,7 +120,8 @@ def wireNumberFromPoint(plane, point):
         Wire number
 
     """
-    return round((plane.cos * point.x + plane.sin * point.y - plane.cos * plane.originTranslation) / plane.pitch)
+    return math.floor((plane.cos * point.x + plane.sin * point.y - plane.cos * plane.originTranslation) / plane.pitch)
+    # return round((plane.cos * point.x + plane.sin * point.y - plane.cos * plane.originTranslation) / plane.pitch)
 
 def fireWires(planes, points):
     """Show which wires have been hit for a given blob
@@ -139,10 +140,10 @@ def fireWires(planes, points):
 
     """
     firedWires = []
-
     for planeNo, plane in enumerate(planes):
         for pointNo, point in enumerate(points):
             wireNo = wireNumberFromPoint(plane, point)
+
             if pointNo == 0:
                 min = wireNo
                 max = wireNo
@@ -215,7 +216,8 @@ def mergeEvent(event):
 
 def makeLines(plane, wires):
     dist0 = plane.pitch * wires[0]
-    dist1 = plane.pitch * (wires[1] + 1)
+    #TODO talk about approximation done here and avoiding magic numbers
+    dist1 = plane.pitch * (wires[1] + 1)-0.0000001
 
     if plane.originTranslation > 0:
         point0 = Point(plane.originTranslation -
@@ -267,38 +269,38 @@ def sortPoints(points):
     return sortedPoints
 
 def checkCell(planes, wires):
-    potentialPoints = []
     points = []
-
+    # print(wires)
 
     for plane0 in range(0,len(wires)):
         for plane1 in  range(plane0+1,len(wires)):
-            print("Planes",plane0,plane1)
-            potentialPoints.extend(wireIntersection(planes[plane0], wires[plane0], planes[plane1], wires[plane1]))
+            # print("Planes",plane0,plane1)
+            potentialPoints = wireIntersection(planes[plane0], wires[plane0], planes[plane1], wires[plane1])
 
-    for point in potentialPoints:
-        isPointInside = True
-        for planeNo, plane in enumerate(planes):
-            wire = wireNumberFromPoint(plane, point)
-            if wire<wires[planeNo][0] or wire>wires[planeNo][1]:
-                isPointInside = False
-                # print(wire<wires[planeNo][0],wire>wires[planeNo][1])
-                # print("\033[91m",wires[planeNo][0]," | ", wire, " | ", wires[planeNo][1],"\033[0m")
-            # else:
-                # print("\033[92m",wires[planeNo][0]," | ", wire, " | ", wires[planeNo][1],"\033[0m")
-        if isPointInside:
-            print("\033[92m",wireNumberFromPoint(planes[0], point), wireNumberFromPoint(planes[1], point), wireNumberFromPoint(planes[2], point),point,"\033[0m")
-            points.append(point)
-        else:
-            print("\033[91m",wireNumberFromPoint(planes[0], point), wireNumberFromPoint(planes[1], point), wireNumberFromPoint(planes[2], point),point,"\033[0m")
+            for point in potentialPoints:
+                isPointInside = True
+                for planeNo, plane in enumerate(planes):
+                    wire = wireNumberFromPoint(plane, point)
+                    if planeNo == plane0 or planeNo == plane1:
+                        continue
+                    else:
+                        if wire<wires[planeNo][0] or wire>wires[planeNo][1]:
+                            isPointInside = False
 
-    print("Potential Points",len(potentialPoints))
-    print("Points",len(points))
+                if isPointInside:
+                    # print("\033[92m",wireNumberFromPoint(planes[0], point), wireNumberFromPoint(planes[1], point), wireNumberFromPoint(planes[2], point),point,"\033[0m")
+                    points.append(point)
+                # else:
+                    # print("\033[91m",wireNumberFromPoint(planes[0], point), wireNumberFromPoint(planes[1], point), wireNumberFromPoint(planes[2], point),point,"\033[0m")
 
     if len(points) <=2:
         return Cell(False, False)
     else:
-        return Cell(list(itertools.chain(*mergeEvent(fireWires(planes,points)))),sortPoints(points))
+        potentialWires = list(itertools.chain(*mergeEvent(fireWires(planes,points))))
+        # potentialWires = list(map(lambda x: (max((x[0][0],x[1][0])),min((x[0][1],x[1][1]))),zip(wires,potentialWires)))
+        points = sortPoints(points)
+        return Cell(potentialWires,points)
+        # return Cell(wires,points)
 
 def generateCells(planes,event):
     cells = []
@@ -343,7 +345,7 @@ def generateMatrix(planes, cells):
 
 def blobInCell(blob,cell):
     for planeNo in range(len(cell.wires)):
-        print(blob.wires[planeNo],"||",cell.wires[planeNo])
+        # print(blob.wires[planeNo],"||",cell.wires[planeNo])
         if blob.wires[planeNo][0]<cell.wires[planeNo][0] or blob.wires[planeNo][1]>cell.wires[planeNo][1]:
             return False
     return True
@@ -358,6 +360,7 @@ def generateTrueCellMatrix(blobs,cells):
                 matrix[cellNo][0] += blob.charge
                 break
 
+    # print(matrix)
     return np.matrix(matrix)
 
 def generateCharge(planes,blobs):
@@ -426,17 +429,18 @@ def main(argv):
     print("\033[93m","Number of Cells:", np.shape(geomMatrix)[1],"\033[0m")
 
     pprint(trueCellCharge)
+    pprint(trueCellCharge.shape)
     # pprint(geomMatrix)
+    # pprint(geomMatrix.shape)
     # pprint(trueWireCharge)
+    # pprint(trueWireCharge.shape)
 
-    # chargeSolving = linear_model.Lasso()
-    # chargeSolving.fit(matrix,charge)
-    #
-    #
-    #
-    # print("\033[91m",charge,"\033[0m")
-    # print("\033[92m",chargeSolving.coef_,"\033[0m")
-    # pprint(event)
+    chargeSolving = linear_model.Lasso(positive = True, alpha=0.14)
+    chargeSolving.fit(geomMatrix,trueWireCharge)
+
+    solved = np.matrix(chargeSolving.coef_.reshape(trueCellCharge.shape))
+    print("\033[92m",solved,"\033[0m")
+
 
     # pprint(planes)
 
