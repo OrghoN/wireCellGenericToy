@@ -11,13 +11,12 @@ Line.__doc__ = '''A line defined by two points'''
 Line.point0.__doc__ = '''First Point'''
 Line.point1.__doc__ = '''Second Point'''
 
-PlaneInfo = namedtuple('PlaneInfo', ['angle', 'pitch', 'noOfWires', 'originTranslation', 'wireTranslation','sin', 'cos', 'gradient'])
+PlaneInfo = namedtuple('PlaneInfo', ['angle', 'pitch', 'noOfWires', 'originTranslation', 'sin', 'cos', 'gradient'])
 PlaneInfo.__doc__ = '''List of information about planes'''
 PlaneInfo.angle.__doc__ = '''angle by whitch plane is roatated'''
 PlaneInfo.pitch.__doc__ = '''wire pitch for the plane'''
 PlaneInfo.noOfWires.__doc__ = '''number of wires in the plane'''
 PlaneInfo.originTranslation.__doc__ = '''x offset for origin of the plane (y origin is always 0)'''
-PlaneInfo.wireTranslation.__doc__ = '''x offset for the first wire from origin of plane'''
 PlaneInfo.sin.__doc__ = '''sin of the plane angle'''
 PlaneInfo.cos.__doc__ = '''cos of the plane angle'''
 PlaneInfo.gradient.__doc__ = '''gradient of the wires in plane'''
