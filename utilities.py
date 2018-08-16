@@ -5,15 +5,17 @@ import numpy as np
 #internal Dependencies
 from dataTypes import *
 
-def generatePlaneInfo(wirePitches, volume, angles, wireTranslations):
+def generatePlaneInfo(wirePitches, volume, angles):
     """Generates information about planes based on wire pitches and volume assuming equal angle between each plane and the next
 
     Parameters
     ----------
-    wirePitches : int or tuple of int or float
+    wirePitches : list or tuple of int or float
         A list of wire pitches, each number corresponding to the pitch of each plane
     volume : DetectorVolume
         The width and height of the detector
+    angles : list or tuple of float
+        List of the angles of the wire plane in radians
 
     Returns
     -------
@@ -21,6 +23,9 @@ def generatePlaneInfo(wirePitches, volume, angles, wireTranslations):
         List of information regarding the planes.
 
     """
+
+    #TODO Add functionality for translating wires by a certain amount
+
     planes = []
 
     for planeNo, pitch in enumerate(wirePitches):
@@ -48,7 +53,7 @@ def generatePlaneInfo(wirePitches, volume, angles, wireTranslations):
             gradient = math.tan(angle - math.pi / 2)
 
         planes.append(PlaneInfo(angle, pitch, noOfWires,
-                                originTranslation, wireTranslations[planeNo], sin, cos, gradient))
+                                originTranslation, sin, cos, gradient))
 
     return planes
 
@@ -65,16 +70,33 @@ def wireNumberFromPoint(plane, point):
     Returns
     -------
     int
-        Wire number
+        Primitive Wire number
 
     """
     return math.floor((plane.cos * point.x + plane.sin * point.y - plane.cos * plane.originTranslation) / plane.pitch)
 
 def pointInWire(plane,point,wire):
-    wireNo = (plane.cos * point.x + plane.sin * point.y - plane.cos * plane.originTranslation) / plane.pitch
-    print(wireNo)
+    """Check if a point is inside a certain merged wire
 
-    if(math.isclose(wireNo,wire-1,rel_tol=1e-5) or math.isclose(wireNo,wire+1,rel_tol=1e-5) or math.floor(wireNo) == wire):
+    Parameters
+    ----------
+    plane : PlaneInfo
+        Plane information for the plane the wire number is for
+    point : Point
+        The point being queried
+    wire : tuple[2] of int
+        A merged wire
+
+    Returns
+    -------
+    Boolean
+        True if point is in wire, False if not
+
+    """
+    wireNo = (plane.cos * point.x + plane.sin * point.y - plane.cos * plane.originTranslation) / plane.pitch
+
+    # The first two check for boundary points while the last accounts for a point being inside the wire
+    if(math.isclose(wireNo,wire[0]-1,rel_tol=1e-5) or math.isclose(wireNo,wire[1]+1,rel_tol=1e-5) or (math.floor(wireNo) >= wire[0] and math.floor(wireNo) <= wire[1])):
         return True
 
     return False
