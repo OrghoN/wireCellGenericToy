@@ -88,3 +88,29 @@ def generateBlobs(planes,volume):
         blobs.append(Blob(charge, list(itertools.chain(*mergeEvent(utilities.fireWires(planes,[point0,point1])))), [point0,point1]))
 
     return blobs
+
+def generateEvent(planes, blobs):
+    """Generate List of wire primitives that were fired based on true blobs
+
+    Parameters
+    ----------
+    planes : list of PlaneInfo
+        A list containing information for all the planes in the detector
+    blobs : list of Blob
+        A list containing true blobs in event
+
+    Returns
+    -------
+    list of list of ints
+        Primitive fired wires from every plane
+
+    """
+    event = []
+    for blobNo, blob in enumerate(blobs):
+        wires = utilities.fireWires(planes, blob.points)
+
+        if blobNo == 0:
+            event = wires
+        event = [set(item[0]).union(item[1])
+                 for item in list(zip(event, wires))]
+    return event
