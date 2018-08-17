@@ -132,3 +132,30 @@ def fireWires(planes, points):
         firedWires.append(list(range(min, max + 1)))
 
     return firedWires
+
+def getChannelNo(planes, wireNo, planeNo):
+    """Get Channel Number for a merged wire
+
+    Parameters
+    ----------
+    planes : list of PlaneInfo
+        A list containing information for all the planes in the detector
+    wireNo : int
+        Primitive Wire
+    planeNo : int
+        Index of plane the wires are in
+
+    Returns
+    -------
+    int
+        Channel number for a primitive wire
+
+    """
+    trueWireNo = 0
+
+    for plane in range(0,planeNo):
+        trueWireNo += planes[plane].noOfWires
+
+    trueWireNo += wireNo
+
+    return trueWireNo
