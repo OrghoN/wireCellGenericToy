@@ -100,3 +100,36 @@ def pointInWire(plane,point,wire):
         return True
 
     return False
+
+def fireWires(planes, points):
+    """Show which wires have been hit for a given blob
+
+    Parameters
+    ----------
+    planes : list of PlaneInfo
+        A list containing information for all the planes in the detector
+    points : list of points
+        points defining ConvexHull of blob
+
+    Returns
+    -------
+    2d list of int
+        A list that has lists of merged wire numbers. one list for every plane
+
+    """
+    firedWires = []
+    for planeNo, plane in enumerate(planes):
+        for pointNo, point in enumerate(points):
+            wireNo = wireNumberFromPoint(plane, point)
+
+            if pointNo == 0:
+                min = wireNo
+                max = wireNo
+            elif wireNo > max:
+                max = wireNo
+            elif wireNo < min:
+                min = wireNo
+
+        firedWires.append(list(range(min, max + 1)))
+
+    return firedWires
