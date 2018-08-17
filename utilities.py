@@ -1,6 +1,5 @@
 #External Dependencies
 import math
-import numpy as np
 
 #internal Dependencies
 from dataTypes import *
