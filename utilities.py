@@ -92,13 +92,13 @@ def pointInWire(plane,point,wire):
         True if point is in wire, False if not
 
     """
-    wireNo = (plane.cos * point.x + plane.sin * point.y - plane.cos * plane.originTranslation) / plane.pitch
+    wireFloat = (plane.cos * point.x + plane.sin * point.y - plane.cos * plane.originTranslation) / plane.pitch
+    wireInt = math.floor(wireFloat)
 
-    # The first two check for boundary points while the last accounts for a point being inside the wire
-    if(math.isclose(wireNo,wire[0]-1,rel_tol=1e-5) or math.isclose(wireNo,wire[1]+1,rel_tol=1e-5) or (math.floor(wireNo) >= wire[0] and math.floor(wireNo) <= wire[1])):
-        return True
+    insideWire = wireInt>=wire[0] and wireInt<=wire[1]
+    onEdge = math.isclose(wireFloat,(wire[0]),rel_tol=1e-5) or math.isclose(wireFloat,(wire[1]+1),rel_tol=1e-5)
 
-    return False
+    return insideWire or onEdge
 
 def fireWires(planes, points):
     """Show which wires have been hit for a given blob

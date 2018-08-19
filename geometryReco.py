@@ -148,8 +148,13 @@ def checkCell(planes, wires):
             for point in potentialPoints:
                 isPointInside = True
                 for planeNo, plane in enumerate(planes):
-                    if not utilities.pointInWire(plane,point,wires[planeNo]):
-                        isPointInside = False
+                    wire = utilities.wireNumberFromPoint(plane, point)
+                    #improves performance by not checking in the planes used to make the point
+                    if planeNo == plane0 or planeNo == plane1:
+                        continue
+                    else:
+                        if not utilities.pointInWire(plane,point,wires[planeNo]):
+                            isPointInside = False
 
                 if isPointInside:
                     points.append(point)
