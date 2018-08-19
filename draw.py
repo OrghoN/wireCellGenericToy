@@ -1,6 +1,7 @@
 # External Dependencies
 import ROOT as root
 import math
+import numpy as np
 
 # Internal Dependencies
 from dataTypes import *
@@ -99,8 +100,8 @@ def drawEventLines(lines, volume):
 
     Returns
     -------
-    list of TLine
-        The actual Tlines to be drawn
+    list of tuple[2] (TLine,boolean)
+        The actual Tlines to be drawn and whether they're center line
 
     """
     drawLines = []
@@ -118,10 +119,7 @@ def drawEventLines(lines, volume):
             y1 = gradient * x1 - gradient * line[0][0].x + line[0][0].y
             drawLine = root.TLine(x0, y0, x1, y1)
 
-        if line[1]:
-            drawLine.SetLineColor(root.kBlue)
-            drawLine.SetLineStyle(2)
-        drawLines.append(drawLine)
+        drawLines.append((drawLine,line[1]))
 
     return drawLines
 
