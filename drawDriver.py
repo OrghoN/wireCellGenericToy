@@ -141,6 +141,9 @@ def main(argv):
                 text.SetTextColor(trueColor)
                 text.Draw()
 
+    # c1.AddExec( 'dynamic', 'TPython::Exec( "draw.zoom()" );' )
+    # c1.Update()
+
     root.gApplication.Run()
 
 

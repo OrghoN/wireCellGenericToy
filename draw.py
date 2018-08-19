@@ -230,3 +230,24 @@ def drawCellPointNumbers(cell):
             numbers.append(root.TText(point.x,point.y,str(pointNo)))
 
     return numbers
+
+def zoom():
+    mouseLocation = Point(root.gPad.GetEventX(),root.gPad.GetEventY())
+
+    #get canvas
+    c1 = root.gPad.GetCanvas()
+
+    #get canvas range
+    x0 = root.Double()
+    y0 = root.Double()
+    x1 = root.Double()
+    y1 = root.Double()
+    c1.GetRange(x0,y0,x1,y1)
+
+    root.gPad.HandleInput()
+    ev = root.gPad.GetEvent()
+    # print(ev)
+    # if ev == 11:
+    #     continue
+    # elif ev == 12:
+    #     continue
