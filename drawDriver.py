@@ -40,9 +40,16 @@ def main(argv):
 
     #Set Colors
     trueColor = root.kGreen
+    blobWidth = 4
+
+    recoColor = root.kRed
+    cellWidth = 4
+
     centerColor = root.kBlue
     centerStyle = 2
-    cellColor = root.kRed
+
+    edgeColor = root.kBlack
+    edgeStyle = 1
 
 
  ######   ########  #######  ##     ## ######## ######## ########  ##    ##
@@ -85,61 +92,27 @@ def main(argv):
 ##     ## ##    ##  ##     ## ##  ##  ##  ##  ##   ### ##    ##
 ########  ##     ## ##     ##  ###  ###  #### ##    ##  ######
 
-    #Generate Drawing Primitives
-    drawnLines = draw.makeEventLines(planes,event, useCenterLines)
-    drawnLines = draw.drawEventLines(drawnLines,volume)
 
-    if reco:
-        drawnCells = draw.drawCells(cells, asMarker)
-
-        if cellNumbering:
-                cellText = draw.drawCellNumbers(cells)
-
-    if trueBlobs:
-        drawnBlobs = draw.drawBlobs(blobs)
-
-        if blobNumbering:
-            blobText = draw.drawCellNumbers(blobs)
-
-    #Paint Drawing Primitives
     #Scaling Canvas to have proper aspect ratio considering detector
     c1 = root.TCanvas( "Detector", "Detector", 200, 10, 700, int(700*(volume.height/volume.width)) )
     c1.Range(0,0,volume.width,volume.height)
     # c1.Range(150,480,250,580)
 
-    #paint Lines
-    for line in drawnLines:
-        if line[1]:
-            line[0].SetLineColor(centerColor)
-            line[0].SetLineStyle(centerStyle)
-        line[0].Draw()
+    #Generate Drawing Primitives
+    drawnLines = draw.makeEventLines(planes,event, useCenterLines)
+    drawnLines = draw.drawEventLines(drawnLines,volume, centerColor, centerStyle,edgeColor,edgeStyle)
 
-    #paint Cells
     if reco:
-        for drawnCellNo, drawnCell in enumerate(drawnCells):
-            for marker in drawnCell:
-                if asMarker:
-                    marker.SetMarkerColor(cellColor)
-                    marker.Draw()
-                else:
-                    marker.SetLineWidth(4)
-                    marker.SetLineColor(cellColor)
-                    marker.Draw()
+        drawnCells = draw.drawCells(cells, asMarker,trueColor, recoColor, cellWidth)
 
-            if cellNumbering:
-                for text in cellText:
-                    # text.SetTextColor(cellColor)
-                    text.Draw()
+        if cellNumbering:
+                cellText = draw.drawCellNumbers(cells)
+
     if trueBlobs:
-        for marker in drawnBlobs:
-            marker.SetLineWidth(4)
-            marker.SetLineColor(trueColor)
-            marker.Draw()
+        drawnBlobs = draw.drawBlobs(blobs, trueColor, blobWidth)
 
         if blobNumbering:
-            for text in blobText:
-                text.SetTextColor(trueColor)
-                text.Draw()
+            blobText = draw.drawCellNumbers(blobs,trueColor)
 
     # c1.AddExec( 'dynamic', 'TPython::Exec( "draw.zoom()" );' )
     # c1.Update()

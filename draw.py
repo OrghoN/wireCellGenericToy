@@ -88,7 +88,7 @@ def makeEventLines(planes, event, useCenterLines):
     return lines
 
 
-def drawEventLines(lines, volume):
+def drawEventLines(lines, volume, centerColor=root.kBlue, centerStyle=2,edgeColor=root.kBlack,edgeStyle=1):
     """Create the TLines that will be drawn
 
     Parameters
@@ -97,6 +97,14 @@ def drawEventLines(lines, volume):
         List of lines in event
     volume : DetectorVolume
         Volume of Detector
+    centerColor : TColor
+        Color of Center Wires
+    centerStyle : TStyle
+        Style of Center Wires
+    edgeColor : TColor
+        Color of Edge Wirees
+    edgeStyle : TStyle
+        Style of edge Wires
 
     Returns
     -------
@@ -119,18 +127,31 @@ def drawEventLines(lines, volume):
             y1 = gradient * x1 - gradient * line[0][0].x + line[0][0].y
             drawLine = root.TLine(x0, y0, x1, y1)
 
+        if line[1]:
+            drawLine.SetLineColor(centerColor)
+            drawLine.SetLineStyle(centerStyle)
+        else:
+            drawLine.SetLineColor(edgeColor)
+            drawLine.SetLineStyle(edgeStyle)
+
+        drawLine.Draw()
+
         drawLines.append((drawLine,line[1]))
 
     return drawLines
 
 
-def drawBlobs(blobs):
+def drawBlobs(blobs, color = root.kGreen, width = 4):
     """Draw True Blobs
 
     Parameters
     ----------
     blobs : list of Blob
         List of True Blobs
+    color : TColor
+        Color of Blobs
+    width : int
+        Width of lines that draw Blobs
 
     Returns
     -------
@@ -138,6 +159,7 @@ def drawBlobs(blobs):
         list of lines to be drawn that represent blobs
 
     """
+
     drawnBlobs = []
 
     for blob in blobs:
@@ -148,10 +170,15 @@ def drawBlobs(blobs):
         drawnBlobs.append(root.TLine(
             blob.points[-1].x, blob.points[-1].y, blob.points[0].x, blob.points[0].y))
 
+    for line in drawnBlobs:
+        line.SetLineWidth(width)
+        line.SetLineColor(color)
+        line.Draw()
+
     return drawnBlobs
 
 
-def drawCells(cells, asMarker):
+def drawCells(cells, asMarker, trueColor = root.kGreen, recoColor = root.kRed, width = 4, TrueCells=[]):
     """Draw the Cells
 
     Parameters
@@ -160,21 +187,40 @@ def drawCells(cells, asMarker):
         List of reconstructed cells
     asMarker : boolen
         If true draw markers denoting vertices else draw polygon
+    trueColor : TColor
+        Color of True Cells
+    recoColor : TColor
+        Color of Cells
+    width : int
+        Width of lines that draw Cells
+    TrueCells : list of Boolean
+        Truth information for the cells
 
     Returns
     -------
     list of list of TLine or TMarker
-        Description of returned object.
+        Drawn Cells
 
     """
     drawnCells = []
 
+    if TrueCells == []:
+        TrueCells = [False] * len(cells)
+
     if asMarker:
-        for cell in cells:
-            drawnCells.append(
-                list(map(lambda p: root.TMarker(p.x, p.y, 21), cell.points)))
+        for cellNo, cell in enumerate(cells):
+            drawnCell = list(map(lambda p: root.TMarker(p.x, p.y, 21), cell.points))
+
+            for marker in drawnCell:
+                if TrueCells[cellNo]:
+                    marker.SetMarkerColor(trueColor)
+                else:
+                    marker.SetMarkerColor(recoColor)
+                marker.Draw()
+
+            drawnCells.append(drawnCell)
     else:
-        for cell in cells:
+        for cellNo, cell in enumerate(cells):
             drawnCell = []
 
             for i in range(1, len(cell.points)):
@@ -184,16 +230,27 @@ def drawCells(cells, asMarker):
             drawnCell.append(root.TLine(
                 cell.points[-1].x, cell.points[-1].y, cell.points[0].x, cell.points[0].y))
 
+            for line in drawnCell:
+                if TrueCells[cellNo]:
+                    line.SetLineColor(trueColor)
+                else:
+                    line.SetLineColor(recoColor)
+                line.SetLineWidth(width)
+
+                line.Draw()
+
             drawnCells.append(drawnCell)
     return drawnCells
 
-def drawCellNumbers(cells):
+def drawCellNumbers(cells, color = root.kBlack):
     """Draw Numbering for the cells
 
     Parameters
     ----------
     cells : list of Cell
         List of reconstructed cells
+    color : TColor
+        Color of text
 
     Returns
     -------
@@ -205,18 +262,25 @@ def drawCellNumbers(cells):
 
     for cellNo, cell in enumerate(cells):
         center = np.mean(cell.points,axis=0)
-        numbers.append(root.TText(center[0],center[1],str(cellNo)))
+        number = root.TText(center[0],center[1],str(cellNo))
+
+        number.SetTextColor(color)
+        number.Draw()
+
+        numbers.append(number)
 
 
     return numbers
 
-def drawCellPointNumbers(cell):
+def drawCellPointNumbers(cell, color = root.kBlack):
     """Draw Numbering for the points in a cell
 
     Parameters
     ----------
     cell : Cell
         Cell in question
+    color : TColor
+        Color of text
 
     Returns
     -------
@@ -227,7 +291,12 @@ def drawCellPointNumbers(cell):
     numbers = []
     if cell[0] != False:
         for pointNo, point in enumerate(cell.points):
-            numbers.append(root.TText(point.x,point.y,str(pointNo)))
+            number = root.TText(point.x,point.y,str(pointNo))
+
+            number.SetTextColor(color)
+            number.Draw()
+
+            numbers.append(number)
 
     return numbers
 
