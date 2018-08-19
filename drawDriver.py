@@ -9,6 +9,7 @@ import utilities
 import geometryGen
 import geometryReco
 import draw
+import matrixGeneration
 
 def generateAngles(noOfPlanes):
     individualAngle = math.pi/noOfPlanes
@@ -32,7 +33,7 @@ def main(argv):
 
     #Set boolean options
     reco = True
-    trueBlobs = True
+    trueBlobs = False
     asMarker = False
     cellNumbering = False
     blobNumbering = False
@@ -43,6 +44,7 @@ def main(argv):
     blobWidth = 4
 
     recoColor = root.kRed
+    detectionColor = root.kBlue
     cellWidth = 4
 
     centerColor = root.kBlue
@@ -84,6 +86,12 @@ def main(argv):
         cells = geometryReco.reconstructCells(planes,event)
         print("\033[93m","Number of Cells:", len(cells),"\033[0m")
 
+        if trueBlobs:
+            trueCellMatrix = matrixGeneration.generateTrueCellMatrix(blobs,cells)
+            trueCells = list(map(lambda x: not math.isclose(x,0,rel_tol=1e-5),trueCellMatrix))
+        else:
+            trueCells = []
+
 ########  ########     ###    ##      ## #### ##    ##  ######
 ##     ## ##     ##   ## ##   ##  ##  ##  ##  ###   ## ##    ##
 ##     ## ##     ##  ##   ##  ##  ##  ##  ##  ####  ## ##
@@ -103,7 +111,7 @@ def main(argv):
     drawnLines = draw.drawEventLines(drawnLines,volume, centerColor, centerStyle,edgeColor,edgeStyle)
 
     if reco:
-        drawnCells = draw.drawCells(cells, asMarker,trueColor, recoColor, cellWidth)
+        drawnCells = draw.drawCells(cells, asMarker,detectionColor, recoColor, cellWidth, trueCells)
 
         if cellNumbering:
                 cellText = draw.drawCellNumbers(cells)

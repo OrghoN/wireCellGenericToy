@@ -163,7 +163,8 @@ def checkCell(planes, wires):
     if len(points) <=2:
         return Cell(False, False)
     else:
-        points = sortPoints(points)
+        if len(points)>3:
+            points = sortPoints(points)
         potentialWires = list(itertools.chain(*geometryGen.mergeEvent(utilities.fireWires(planes,points))))
         potentialWires = list(map(lambda x: (max((x[0][0],x[1][0])),min((x[0][1],x[1][1]))),zip(wires,potentialWires)))
         return Cell(potentialWires,points)

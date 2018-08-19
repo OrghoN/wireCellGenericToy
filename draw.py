@@ -178,7 +178,7 @@ def drawBlobs(blobs, color = root.kGreen, width = 4):
     return drawnBlobs
 
 
-def drawCells(cells, asMarker, trueColor = root.kGreen, recoColor = root.kRed, width = 4, TrueCells=[]):
+def drawCells(cells, asMarker, trueColor = root.kGreen, recoColor = root.kRed, width = 4, trueCells=[]):
     """Draw the Cells
 
     Parameters
@@ -204,15 +204,15 @@ def drawCells(cells, asMarker, trueColor = root.kGreen, recoColor = root.kRed, w
     """
     drawnCells = []
 
-    if TrueCells == []:
-        TrueCells = [False] * len(cells)
+    if trueCells == []:
+        trueCells = [False] * len(cells)
 
     if asMarker:
         for cellNo, cell in enumerate(cells):
             drawnCell = list(map(lambda p: root.TMarker(p.x, p.y, 21), cell.points))
 
             for marker in drawnCell:
-                if TrueCells[cellNo]:
+                if trueCells[cellNo]:
                     marker.SetMarkerColor(trueColor)
                 else:
                     marker.SetMarkerColor(recoColor)
@@ -231,7 +231,7 @@ def drawCells(cells, asMarker, trueColor = root.kGreen, recoColor = root.kRed, w
                 cell.points[-1].x, cell.points[-1].y, cell.points[0].x, cell.points[0].y))
 
             for line in drawnCell:
-                if TrueCells[cellNo]:
+                if trueCells[cellNo]:
                     line.SetLineColor(trueColor)
                 else:
                     line.SetLineColor(recoColor)
