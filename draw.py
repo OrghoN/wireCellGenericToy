@@ -1,5 +1,6 @@
 # External Dependencies
 import ROOT as root
+import math
 
 # Internal Dependencies
 from dataTypes import *
