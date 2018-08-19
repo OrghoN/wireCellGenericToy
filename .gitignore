@@ -104,3 +104,6 @@ CTestTestfile.cmake
 
 # Python ByteCode
 *.pyc
+
+# Pytest
+.pytest_cache
