@@ -1,5 +1,6 @@
 # External Dependencies
 import numpy as np
+import itertools
 
 # Internal Dependencies
 from dataTypes import *
@@ -84,3 +85,42 @@ def constructGeometryMatrix(planes, cells):
             matrix[channelList.index(channelNo)][cellNo] = 1
 
     return channelList, np.matrix(matrix)
+
+def constructChargeList(planes,blobs):
+    chargeList = []
+
+    for plane in planes:
+        chargeList.append(list(np.zeros(plane.noOfWires,dtype=int)))
+
+    for blob in blobs:
+        wires = utilities.fireWires(planes,blob.points)
+        for planeNo, plane in enumerate(wires):
+            charge = blob.charge/(len(plane))
+            for wireNo in plane:
+                chargeList[planeNo][wireNo] += charge
+
+    return chargeList
+
+def measureCharge(wireList,chargeList):
+    charges = []
+    chargeList = list(itertools.chain(*chargeList))
+
+    for wire in wireList:
+        charge = 0
+        test = []
+        for i in range(wire[0],wire[1]+1):
+            charge += chargeList[i]
+
+        charges.append(charge)
+
+    return np.reshape(np.matrix(charges),(len(wireList),1))
+
+def addUncertainity(geometryMatrix,wireChargeMatrix,covarianceMatrix):
+    invertedcovarianceMatrix = np.linalg.inv(covarianceMatrix)
+    decomposedMatrix = np.linalg.cholesky(invertedcovarianceMatrix)
+
+    #Adding Uncertaininty through Covariance Matrix
+    wireChargeMatrixU = decomposedMatrix * wireChargeMatrix
+    geometryMatrixU = decomposedMatrix * geometryMatrix
+
+    return geometryMatrixU, wireChargeMatrixU
