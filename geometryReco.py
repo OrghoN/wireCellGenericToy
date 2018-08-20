@@ -159,8 +159,8 @@ def checkCell(planes, wires):
                 if isPointInside:
                     points.append(point)
 
-    #if less than or equal to 2 points, cell isn't real
-    if len(points) <=2:
+    #if less than or equal to 2 points or contain the exact same points, cell isn't real
+    if len(points) <=2 or len(set(points)) <=2 :
         return Cell(False, False)
     else:
         if len(points)>3:

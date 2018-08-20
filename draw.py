@@ -300,6 +300,54 @@ def drawCellPointNumbers(cell, color = root.kBlack):
 
     return numbers
 
+def zoomCell(cell,side,volume):
+    """Zoom in on a particular cell
+
+    Parameters
+    ----------
+    cell : Cell
+        The cell in question
+    side : int
+        Width of the zoom window in mm
+    volume : DetectorVolume
+        Volume of detector
+
+    Returns
+    -------
+    tuple[2] of point
+        (Bottom Left Point, Top Right Point)
+
+    """
+    width = side
+    height = int(side * (volume.height/volume.width))
+
+    center = Point(*np.mean(cell.points,axis=0))
+
+    x1 = int(center.x-width/2)
+    y1 = int(center.y-height/2)
+
+    if x1 < 0:
+        x1 = 0
+    if y1 < 0:
+        y1 = 0
+
+    x2 = x1 + width
+    y2 = y1 + height
+
+    if x2 > volume.width:
+        x2 = volume.width
+        x1 = x2 - width
+    if y2 > volume.height:
+        y2 = volume.height
+        y1 = y2 - height
+
+    #get canvas
+    c1 = root.gPad.GetCanvas()
+
+    c1.Range(x1,y1,x2,y2)
+
+    return (Point(x1,y1),Point(x2,y2))
+
 def zoom():
     mouseLocation = Point(root.gPad.GetEventX(),root.gPad.GetEventY())
 

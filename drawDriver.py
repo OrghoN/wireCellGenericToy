@@ -33,9 +33,9 @@ def main(argv):
 
     #Set boolean options
     reco = True
-    trueBlobs = False
+    trueBlobs = True
     asMarker = False
-    cellNumbering = False
+    cellNumbering = True
     blobNumbering = False
     useCenterLines = "both"
 
@@ -71,9 +71,14 @@ def main(argv):
     planes = utilities.generatePlaneInfo(wirePitches, volume, angles)
 
     #Generating Random Blobs
-    blobs = geometryGen.generateBlobs(planes,volume)
+    # blobs = geometryGen.generateBlobs(planes,volume)
 
-    # blobs = [Blob(charge=4.58748705679011, wires=[(153, 159), (90, 93), (33, 37)], points=[Point(x=813.8436039106869, y=417.60082990853977), Point(x=830.2734426303631, y=440.38585607276224)]), Blob(charge=5.4507416355248655, wires=[(76, 79), (61, 62), (82, 85)], points=[Point(x=571.9607228368554, y=112.88215335645768), Point(x=588.5515032286443, y=118.44586995598164)]), Blob(charge=5.495377296955472, wires=[(17, 22), (105, 105), (183, 188)], points=[Point(x=58.71312010523644, y=68.38897935986054), Point(x=84.83345663997831, y=82.47157029824348)]), Blob(charge=5.241463033926113, wires=[(136, 138), (110, 111), (71, 75)], points=[Point(x=624.9752668698684, y=427.14556360556423), Point(x=640.3274801472991, y=431.31931873656487)]), Blob(charge=4.208319477076222, wires=[(131, 135), (160, 162), (125, 130)], points=[Point(x=348.07442850616644, y=559.1636459012446), Point(x=373.85269822519103, y=567.3346897979171)]), Blob(charge=5.333965066328843, wires=[(116, 118), (54, 56), (37, 37)], points=[Point(x=810.1658190815788, y=203.6702859033279), Point(x=814.233160795954, y=216.24453035143915)]), Blob(charge=5.475988684715355, wires=[(108, 114), (173, 175), (161, 165)], points=[Point(x=174.52867097725323, y=527.7379959165255), Point(x=193.57279642227633, y=547.4596105178639)])]
+    # print(blobs)
+
+    # blobs = [Blob(charge=4.828952447681453, wires=[(223, 226), (201, 204), (75, 80)], points=[Point(x=595.8786446454473, y=945.6709058084462), Point(x=621.5301267341816, y=946.3718554738933)]), Blob(charge=5.560288337141905, wires=[(108, 115), (58, 62), (46, 49)], points=[Point(x=750.7271773750969, y=195.37723530628503), Point(x=765.5255337579047, y=223.83891845934124)]), Blob(charge=4.721229266692435, wires=[(111, 117), (79, 82), (64, 67)], points=[Point(x=661.5830993014157, y=262.0096618341117), Point(x=676.7919427580774, y=289.05867096940364)]), Blob(charge=4.361531266668869, wires=[(46, 48), (74, 75), (126, 128)], points=[Point(x=359.032000205643, y=63.416651609800034), Point(x=366.50877374091743, y=66.2727800933862)]), Blob(charge=5.313535752893215, wires=[(45, 48), (140, 142), (191, 197)], points=[Point(x=14.838339866517725, y=255.45321903504325), Point(x=43.02000124931331, y=256.34181203064566)]), Blob(charge=5.674107403614195, wires=[(156, 160), (200, 202), (142, 144)], points=[Point(x=279.0889741992674, y=742.3297689987869), Point(x=289.6831786575615, y=759.9990050223491)])]
+
+    blobs = [Blob(charge=5.560288337141905, wires=[(108, 115), (58, 62), (46, 49)], points=[Point(x=750.7271773750969, y=195.37723530628503), Point(x=765.5255337579047, y=223.83891845934124)]), Blob(charge=4.361531266668869, wires=[(46, 48), (74, 75), (126, 128)], points=[Point(x=359.032000205643, y=63.416651609800034), Point(x=366.50877374091743, y=66.2727800933862)]), Blob(charge=5.313535752893215, wires=[(45, 48), (140, 142), (191, 197)], points=[Point(x=14.838339866517725, y=255.45321903504325), Point(x=43.02000124931331, y=256.34181203064566)])]
+
 
     #Creating Event
     event = geometryGen.generateEvent(planes,blobs)
@@ -104,7 +109,12 @@ def main(argv):
     #Scaling Canvas to have proper aspect ratio considering detector
     c1 = root.TCanvas( "Detector", "Detector", 200, 10, 700, int(700*(volume.height/volume.width)) )
     c1.Range(0,0,volume.width,volume.height)
-    # c1.Range(150,480,250,580)
+
+    # draw.zoomCell(cells[0],100,volume)
+    draw.zoomCell(cells[1],100,volume)
+    # draw.zoomCell(cells[2],100,volume)
+    # draw.zoomCell(cells[3],100,volume)
+
 
     #Generate Drawing Primitives
     drawnLines = draw.makeEventLines(planes,event, useCenterLines)
