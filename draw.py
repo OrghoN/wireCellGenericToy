@@ -179,7 +179,7 @@ def drawBlobs(blobs, color = root.kGreen, width = 4):
     return drawnBlobs
 
 
-def drawCells(cells, asMarker, trueColor = root.kGreen, recoColor = root.kRed, width = 4, trueCells=[]):
+def drawCells(cells, asMarker, trueColor = root.kGreen, recoColor = root.kRed, width = 4, trueCells=[], drawFake=True):
     """Draw the Cells
 
     Parameters
@@ -194,8 +194,10 @@ def drawCells(cells, asMarker, trueColor = root.kGreen, recoColor = root.kRed, w
         Color of Cells
     width : int
         Width of lines that draw Cells
-    TrueCells : list of Boolean
+    trueCells : list of Boolean
         Truth information for the cells
+    drawFake : Boolean
+        True if draw fake cells false otherwise
 
     Returns
     -------
@@ -232,18 +234,22 @@ def drawCells(cells, asMarker, trueColor = root.kGreen, recoColor = root.kRed, w
                 cell.points[-1].x, cell.points[-1].y, cell.points[0].x, cell.points[0].y))
 
             for line in drawnCell:
-                if trueCells[cellNo]:
-                    line.SetLineColor(trueColor)
-                else:
-                    line.SetLineColor(recoColor)
                 line.SetLineWidth(width)
-
-                line.Draw()
+                if drawFake:
+                    if trueCells[cellNo]:
+                        line.SetLineColor(trueColor)
+                    else:
+                        line.SetLineColor(recoColor)
+                    line.Draw()
+                else:
+                    if trueCells[cellNo]:
+                        line.SetLineColor(trueColor)
+                        line.Draw()
 
             drawnCells.append(drawnCell)
     return drawnCells
 
-def drawCellNumbers(cells, color = root.kBlack):
+def drawCellNumbers(cells, color = root.kBlack, trueCells=[], drawFake=True):
     """Draw Numbering for the cells
 
     Parameters
@@ -252,6 +258,10 @@ def drawCellNumbers(cells, color = root.kBlack):
         List of reconstructed cells
     color : TColor
         Color of text
+    trueCells : list of Boolean
+        Truth information for the cells
+    drawFake : Boolean
+        True if draw fake cells false otherwise
 
     Returns
     -------
@@ -261,14 +271,27 @@ def drawCellNumbers(cells, color = root.kBlack):
     """
     numbers = []
 
+    if trueCells == []:
+        trueCells = [False] * len(cells)
+
+    counter = 0
+
     for cellNo, cell in enumerate(cells):
         center = np.mean(cell.points,axis=0)
-        number = root.TText(center[0],center[1],str(cellNo))
+        number = root.TText(center[0],center[1],str(counter))
 
         number.SetTextColor(color)
-        number.Draw()
+        if drawFake:
+            counter += 1
+            number.Draw()
+            numbers.append(number)
+        else:
+            if trueCells[cellNo]:
+                counter += 1
+                number.Draw()
+                numbers.append(number)
 
-        numbers.append(number)
+
 
 
     return numbers
@@ -368,7 +391,7 @@ def saveImage(fileName,directory=""):
     os.system("convert " + directory + "/png/" + fileName + ".png -fuzz 20% -transparent white " + directory + "/png/" + fileName+".png")
 
     return True
-    
+
 def zoom():
     mouseLocation = Point(root.gPad.GetEventX(),root.gPad.GetEventY())
 
