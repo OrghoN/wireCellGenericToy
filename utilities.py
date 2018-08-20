@@ -134,7 +134,7 @@ def fireWires(planes, points):
     return firedWires
 
 def getChannelNo(planes, wireNo, planeNo):
-    """Get Channel Number for a merged wire
+    """Get Channel Number for a primitve wire
 
     Parameters
     ----------

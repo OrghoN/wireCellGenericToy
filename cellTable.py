@@ -46,22 +46,6 @@ def generateMatrix(planes, cells):
 
     return wires, np.matrix(matrix)
 
-def blobInCell(blob,cell):
-    for planeNo in range(len(cell.wires)):
-        if blob.wires[planeNo][0]<cell.wires[planeNo][0] or blob.wires[planeNo][1]>cell.wires[planeNo][1]:
-            return False
-    return True
-
-def generateTrueCellMatrix(blobs,cells):
-    matrix = list(np.zeros((len(cells),1)))
-
-    for blob in blobs:
-        for cellNo, cell in enumerate(cells):
-            if(blobInCell(blob,cell)):
-                matrix[cellNo][0] += blob.charge
-                break
-
-    return np.matrix(matrix)
 
 def generateCharge(planes,blobs):
     chargeMatrix = []

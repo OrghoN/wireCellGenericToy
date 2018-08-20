@@ -3,6 +3,7 @@ import numpy as np
 
 # Internal Dependencies
 from dataTypes import *
+import utilities
 
 def blobInCell(blob, cell):
     """Check if a True Blob is in a cell
@@ -51,3 +52,35 @@ def generateTrueCellMatrix(blobs, cells):
                 break
 
     return np.matrix(matrix)
+
+def constructGeometryMatrix(planes, cells):
+    """Make a matrix that associates merged wires and cells based on detector Geometry
+
+    Parameters
+    ----------
+    planes : list of PlaneInfo
+        A list containing information for all the planes in the detector
+    cells : list of Cell
+        List of cells Reconstructed from Geometric information
+
+    Returns
+    -------
+    list of tuple[2] int, np.matrix
+        list of merged channels, Matrix that associates merged wire with merged cells
+
+    """
+    channelList = []
+    matrix = []
+
+    for cellNo, cell in enumerate(cells):
+        for planeNo, wire in enumerate(cell.wires):
+            channelNo = (utilities.getChannelNo(planes, wire[0], planeNo), utilities.getChannelNo(planes, wire[1], planeNo))
+
+            #Check if wire is already in list
+            if channelNo not in channelList:
+                channelList.append(channelNo)
+                matrix.append(np.zeros(len(cells),dtype=int))
+
+            matrix[channelList.index(channelNo)][cellNo] = 1
+
+    return channelList, np.matrix(matrix)

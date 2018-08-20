@@ -364,8 +364,11 @@ def saveImage(fileName,directory=""):
     #save file and convert png to transparent background
     c1.SaveAs(directory + "/png/" + fileName+".png")
     c1.SaveAs(directory + "/pdf/" + fileName+".pdf")
+    #Convert image to have transparent background requires imagemagick
     os.system("convert " + directory + "/png/" + fileName + ".png -fuzz 20% -transparent white " + directory + "/png/" + fileName+".png")
 
+    return True
+    
 def zoom():
     mouseLocation = Point(root.gPad.GetEventX(),root.gPad.GetEventY())
 

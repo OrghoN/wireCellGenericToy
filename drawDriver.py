@@ -95,9 +95,16 @@ def main(argv):
         cells = geometryReco.reconstructCells(planes,event)
         print("\033[93m","Number of Cells:", len(cells),"\033[0m")
 
+        #create matrix associating wires and cells
+        channelList, geometryMatrix = matrixGeneration.constructGeometryMatrix(planes, cells)
+        print(geometryMatrix)
+        print(channelList)
+
         if trueBlobs:
             trueCellMatrix = matrixGeneration.generateTrueCellMatrix(blobs,cells)
             trueCells = list(map(lambda x: not math.isclose(x,0,rel_tol=1e-5),trueCellMatrix))
+
+            trueWireMatrix = geometryMatrix*trueCellMatrix
         else:
             trueCells = []
 
