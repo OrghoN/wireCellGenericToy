@@ -53,6 +53,10 @@ def main(argv):
     edgeColor = root.kBlack
     edgeStyle = 1
 
+    #saveOptions
+    directory = "img"
+    fileName = ""
+
 
  ######   ########  #######  ##     ## ######## ######## ########  ##    ##
 ##    ##  ##       ##     ## ###   ### ##          ##    ##     ##  ##  ##
@@ -111,7 +115,7 @@ def main(argv):
     c1.Range(0,0,volume.width,volume.height)
 
     # draw.zoomCell(cells[0],100,volume)
-    draw.zoomCell(cells[1],100,volume)
+    # draw.zoomCell(cells[1],100,volume)
     # draw.zoomCell(cells[2],100,volume)
     # draw.zoomCell(cells[3],100,volume)
 
@@ -132,6 +136,8 @@ def main(argv):
         if blobNumbering:
             blobText = draw.drawCellNumbers(blobs,trueColor)
 
+    if isinstance(fileName, str) and len(fileName)>0:
+        draw.saveImage(fileName,directory)
     # c1.AddExec( 'dynamic', 'TPython::Exec( "draw.zoom()" );' )
     # c1.Update()
 

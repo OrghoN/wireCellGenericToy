@@ -2,6 +2,7 @@
 import ROOT as root
 import math
 import numpy as np
+import os
 
 # Internal Dependencies
 from dataTypes import *
@@ -347,6 +348,23 @@ def zoomCell(cell,side,volume):
     c1.Range(x1,y1,x2,y2)
 
     return (Point(x1,y1),Point(x2,y2))
+
+def saveImage(fileName,directory=""):
+    #check if directories exist make if not
+    if len(directory)>0 and not (os.path.isdir(directory)):
+        os.mkdir(directory)
+    if not (os.path.isdir(directory+"/png")):
+        os.mkdir(directory+"/png")
+    if not (os.path.isdir(directory+"/pdf")):
+        os.mkdir(directory+"/pdf")
+
+    #get canvas
+    c1 = root.gPad.GetCanvas()
+
+    #save file and convert png to transparent background
+    c1.SaveAs(directory + "/png/" + fileName+".png")
+    c1.SaveAs(directory + "/pdf/" + fileName+".pdf")
+    os.system("convert " + directory + "/png/" + fileName + ".png -fuzz 20% -transparent white " + directory + "/png/" + fileName+".png")
 
 def zoom():
     mouseLocation = Point(root.gPad.GetEventX(),root.gPad.GetEventY())
