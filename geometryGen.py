@@ -1,6 +1,7 @@
 #External Dependencies
 import numpy as np
 import itertools
+import math
 
 #Internal Dependencies
 from dataTypes import *
@@ -81,8 +82,11 @@ def generateBlobs(planes,volume):
 
         point1 = Point(xOffset, yOffset)
 
+
         #charge calculations
-        meanCharge, sigmaCharge = 5, 0.5
+        meanCharge = math.sqrt((point1.x-point0.x)*(point1.x-point0.x)+(point1.y-point0.y)*(point1.y-point0.y))
+        sigmaCharge = math.sqrt(meanCharge)
+        # meanCharge, sigmaCharge = 5, 0.5
         charge = np.random.normal(meanCharge, sigmaCharge)
 
         blobs.append(Blob(charge, list(itertools.chain(*mergeEvent(utilities.fireWires(planes,[point0,point1])))), [point0,point1]))
