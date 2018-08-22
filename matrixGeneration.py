@@ -70,21 +70,63 @@ def constructGeometryMatrix(planes, cells):
         list of merged channels, Matrix that associates merged wire with merged cells
 
     """
+    splittingList = []
+
+    # createSplittingList
+    for cellNo, cell in enumerate(cells):
+        for planeNo, wire in enumerate(cell.wires):
+            splittingList.append(utilities.getChannelNo(planes, wire[0], planeNo))
+            splittingList.append(utilities.getChannelNo(planes, wire[1], planeNo))
+
+    #Sort and make list unique
+    splittingList = list(set(splittingList))
+    splittingList.sort()
+
     channelList = []
     matrix = []
 
     for cellNo, cell in enumerate(cells):
         for planeNo, wire in enumerate(cell.wires):
-            channelNo = (utilities.getChannelNo(planes, wire[0], planeNo), utilities.getChannelNo(planes, wire[1], planeNo))
+            channel0 = utilities.getChannelNo(planes, wire[0], planeNo)
+            channel1 = utilities.getChannelNo(planes, wire[1], planeNo)
 
-            #Check if wire is already in list
-            if channelNo not in channelList:
-                channelList.append(channelNo)
-                matrix.append(np.zeros(len(cells),dtype=int))
+            if channel0 == channel1:
+                mergedChannel = (channel0, channel1)
 
-            matrix[channelList.index(channelNo)][cellNo] = 1
+                #Check if wire is already in list
+                if mergedChannel not in channelList:
+                    channelList.append(mergedChannel)
+                    matrix.append(np.zeros(len(cells),dtype=int))
+
+                matrix[channelList.index(mergedChannel)][cellNo] = 1 
+
+            for i in range(splittingList.index(channel0),splittingList.index(channel1)):
+                mergedChannel = (splittingList[i],splittingList[i+1])
+
+                #Check if wire is already in list
+                if mergedChannel not in channelList:
+                    channelList.append(mergedChannel)
+                    matrix.append(np.zeros(len(cells),dtype=int))
+
+                matrix[channelList.index(mergedChannel)][cellNo] = 1
 
     return channelList, np.matrix(matrix)
+    ####################################################################
+    # channelList = []
+    # matrix = []
+    #
+    # for cellNo, cell in enumerate(cells):
+    #     for planeNo, wire in enumerate(cell.wires):
+    #         channelNo = (utilities.getChannelNo(planes, wire[0], planeNo), utilities.getChannelNo(planes, wire[1], planeNo))
+    #
+    #         #Check if wire is already in list
+    #         if channelNo not in channelList:
+    #             channelList.append(channelNo)
+    #             matrix.append(np.zeros(len(cells),dtype=int))
+    #
+    #         matrix[channelList.index(channelNo)][cellNo] = 1
+    #
+    # return channelList, np.matrix(matrix)
 
 def constructChargeList(planes,blobs):
     chargeList = []

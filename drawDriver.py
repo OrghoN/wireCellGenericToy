@@ -79,13 +79,13 @@ def main(argv):
     planes = utilities.generatePlaneInfo(wirePitches, volume, angles)
 
     #Generating Random Blobs
-    blobs = geometryGen.generateBlobs(planes,volume)
+    # blobs = geometryGen.generateBlobs(planes,volume)
 
     # print(blobs)
 
     # blobs = [Blob(charge=4.828952447681453, wires=[(223, 226), (201, 204), (75, 80)], points=[Point(x=595.8786446454473, y=945.6709058084462), Point(x=621.5301267341816, y=946.3718554738933)]), Blob(charge=5.560288337141905, wires=[(108, 115), (58, 62), (46, 49)], points=[Point(x=750.7271773750969, y=195.37723530628503), Point(x=765.5255337579047, y=223.83891845934124)]), Blob(charge=4.721229266692435, wires=[(111, 117), (79, 82), (64, 67)], points=[Point(x=661.5830993014157, y=262.0096618341117), Point(x=676.7919427580774, y=289.05867096940364)]), Blob(charge=4.361531266668869, wires=[(46, 48), (74, 75), (126, 128)], points=[Point(x=359.032000205643, y=63.416651609800034), Point(x=366.50877374091743, y=66.2727800933862)]), Blob(charge=5.313535752893215, wires=[(45, 48), (140, 142), (191, 197)], points=[Point(x=14.838339866517725, y=255.45321903504325), Point(x=43.02000124931331, y=256.34181203064566)]), Blob(charge=5.674107403614195, wires=[(156, 160), (200, 202), (142, 144)], points=[Point(x=279.0889741992674, y=742.3297689987869), Point(x=289.6831786575615, y=759.9990050223491)])]
 
-    # blobs = [Blob(charge=5.560288337141905, wires=[(108, 115), (58, 62), (46, 49)], points=[Point(x=750.7271773750969, y=195.37723530628503), Point(x=765.5255337579047, y=223.83891845934124)]), Blob(charge=4.361531266668869, wires=[(46, 48), (74, 75), (126, 128)], points=[Point(x=359.032000205643, y=63.416651609800034), Point(x=366.50877374091743, y=66.2727800933862)]), Blob(charge=5.313535752893215, wires=[(45, 48), (140, 142), (191, 197)], points=[Point(x=14.838339866517725, y=255.45321903504325), Point(x=43.02000124931331, y=256.34181203064566)])]
+    blobs = [Blob(charge=5.560288337141905, wires=[(108, 115), (58, 62), (46, 49)], points=[Point(x=750.7271773750969, y=195.37723530628503), Point(x=765.5255337579047, y=223.83891845934124)]), Blob(charge=4.361531266668869, wires=[(46, 48), (74, 75), (126, 128)], points=[Point(x=359.032000205643, y=63.416651609800034), Point(x=366.50877374091743, y=66.2727800933862)]), Blob(charge=5.313535752893215, wires=[(45, 48), (140, 142), (191, 197)], points=[Point(x=14.838339866517725, y=255.45321903504325), Point(x=43.02000124931331, y=256.34181203064566)])]
 
     #Creating Event
     event = geometryGen.generateEvent(planes,blobs)
@@ -102,6 +102,7 @@ def main(argv):
         channelList, geometryMatrix = matrixGeneration.constructGeometryMatrix(planes, cells)
         # print("A")
         # print(geometryMatrix)
+        print(channelList)
 
         #covariance Matrix
         covarianceMatrix = np.identity(len(channelList))
@@ -109,24 +110,26 @@ def main(argv):
         #create Chrage Matrices
         masterChargeList = matrixGeneration.constructChargeList(planes,blobs)
         recoWireMatrix = matrixGeneration.measureCharge(channelList,masterChargeList)
-        # print("reco:y")
-        # print(recoWireMatrix)
+        print("reco:y")
+        print(recoWireMatrix)
 
         #solve
         geometryMatrixU, recoWireMatrixU = matrixGeneration.addUncertainity(geometryMatrix,recoWireMatrix,covarianceMatrix)
 
         recoCellMatrix = chargeSolving.solve(recoWireMatrixU, geometryMatrixU, alpha)
         recoCells = list(map(lambda x: not math.isclose(x,0,rel_tol=1e-5),recoCellMatrix))
-        print("reco:x")
-        print(recoCellMatrix)
+        # print("reco:x")
+        # print(recoCellMatrix)
 
         if trueBlobs:
             trueCellMatrix = matrixGeneration.generateTrueCellMatrix(blobs,cells)
             trueCells = list(map(lambda x: not math.isclose(x,0,rel_tol=1e-5),trueCellMatrix))
-            print("x")
-            print(trueCellMatrix)
+            # print("x")
+            # print(trueCellMatrix)
 
             trueWireMatrix = geometryMatrix*trueCellMatrix
+            print("y")
+            print(trueWireMatrix)
         else:
             trueCells = []
 
