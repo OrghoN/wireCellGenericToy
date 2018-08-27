@@ -76,7 +76,7 @@ def constructGeometryMatrix(planes, cells):
     for cellNo, cell in enumerate(cells):
         for planeNo, wire in enumerate(cell.wires):
             splittingList.append(utilities.getChannelNo(planes, wire[0], planeNo))
-            splittingList.append(utilities.getChannelNo(planes, wire[1], planeNo))
+            splittingList.append(utilities.getChannelNo(planes, wire[1], planeNo)+1)
 
     #Sort and make list unique
     splittingList = list(set(splittingList))
@@ -90,25 +90,20 @@ def constructGeometryMatrix(planes, cells):
             channel0 = utilities.getChannelNo(planes, wire[0], planeNo)
             channel1 = utilities.getChannelNo(planes, wire[1], planeNo)
 
-            if channel0 == channel1:
-                mergedChannel = (channel0, channel1)
+            # for i in range(splitList.index(5),splitList.index(5+1)):
+    # ...:     print((splitList[i],splitList[i+1]-1))
+
+            for i in range(splittingList.index(channel0),splittingList.index(channel1+1)):
+                mergedChannel = (splittingList[i],splittingList[i+1]-1)
+                fractionalAssociation = (mergedChannel[1]-mergedChannel[0]+1)/(channel1-channel0+1)
+                print(fractionalAssociation)
 
                 #Check if wire is already in list
                 if mergedChannel not in channelList:
                     channelList.append(mergedChannel)
-                    matrix.append(np.zeros(len(cells),dtype=int))
+                    matrix.append(np.zeros(len(cells)))
 
-                matrix[channelList.index(mergedChannel)][cellNo] = 1 
-
-            for i in range(splittingList.index(channel0),splittingList.index(channel1)):
-                mergedChannel = (splittingList[i],splittingList[i+1])
-
-                #Check if wire is already in list
-                if mergedChannel not in channelList:
-                    channelList.append(mergedChannel)
-                    matrix.append(np.zeros(len(cells),dtype=int))
-
-                matrix[channelList.index(mergedChannel)][cellNo] = 1
+                matrix[channelList.index(mergedChannel)][cellNo] = fractionalAssociation
 
     return channelList, np.matrix(matrix)
     ####################################################################
