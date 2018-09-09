@@ -90,13 +90,9 @@ def constructGeometryMatrix(planes, cells):
             channel0 = utilities.getChannelNo(planes, wire[0], planeNo)
             channel1 = utilities.getChannelNo(planes, wire[1], planeNo)
 
-            # for i in range(splitList.index(5),splitList.index(5+1)):
-    # ...:     print((splitList[i],splitList[i+1]-1))
-
             for i in range(splittingList.index(channel0),splittingList.index(channel1+1)):
                 mergedChannel = (splittingList[i],splittingList[i+1]-1)
                 fractionalAssociation = (mergedChannel[1]-mergedChannel[0]+1)/(channel1-channel0+1)
-                print(fractionalAssociation)
 
                 #Check if wire is already in list
                 if mergedChannel not in channelList:
@@ -106,22 +102,6 @@ def constructGeometryMatrix(planes, cells):
                 matrix[channelList.index(mergedChannel)][cellNo] = fractionalAssociation
 
     return channelList, np.matrix(matrix)
-    ####################################################################
-    # channelList = []
-    # matrix = []
-    #
-    # for cellNo, cell in enumerate(cells):
-    #     for planeNo, wire in enumerate(cell.wires):
-    #         channelNo = (utilities.getChannelNo(planes, wire[0], planeNo), utilities.getChannelNo(planes, wire[1], planeNo))
-    #
-    #         #Check if wire is already in list
-    #         if channelNo not in channelList:
-    #             channelList.append(channelNo)
-    #             matrix.append(np.zeros(len(cells),dtype=int))
-    #
-    #         matrix[channelList.index(channelNo)][cellNo] = 1
-    #
-    # return channelList, np.matrix(matrix)
 
 def constructChargeList(planes,blobs):
     chargeList = []
