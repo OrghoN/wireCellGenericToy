@@ -48,7 +48,7 @@ def mergeEvent(event):
 
     return mergedEvent
 
-def generateBlobs(planes,volume):
+def generateBlobs(planes,volume, numberOfBlobs):
     """Generate random true blobs
 
     Parameters
@@ -67,7 +67,7 @@ def generateBlobs(planes,volume):
     blobs = []
 
     #Arbitrary number of blobs from 2 to 15
-    for i in range(0,np.random.randint(2,15)):
+    for i in range(0,numberOfBlobs):
         point0 = Point(np.random.random_sample() * volume.width,
                        np.random.random_sample() * volume.height)
 
