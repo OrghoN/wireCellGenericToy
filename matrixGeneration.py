@@ -114,8 +114,8 @@ def constructChargeList(planes,blobs):
         for planeNo, plane in enumerate(wires):
             charge = blob.charge/(len(plane))
             for wireNo in plane:
-                chargeList[planeNo][wireNo] += charge
-
+                chargeList[planeNo][wireNo-1] += charge
+            
     return chargeList
 
 def measureCharge(wireList,chargeList):
