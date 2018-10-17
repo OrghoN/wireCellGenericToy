@@ -1,0 +1,100 @@
+\begin{sphinxtheindex}
+\def\bigletter#1{{\Large\sffamily#1}\nopagebreak\vspace{1mm}}
+
+  \bigletter A
+  \item angle (dataTypes.PlaneInfo attribute), \hyperpage{3}
+
+  \indexspace
+  \bigletter B
+  \item Blob (class in dataTypes), \hyperpage{1}
+
+  \indexspace
+  \bigletter C
+  \item Cell (class in dataTypes), \hyperpage{1}
+  \item charge (dataTypes.Blob attribute), \hyperpage{1}
+  \item checkCell() (in module geometryReco), \hyperpage{6}
+  \item cos (dataTypes.PlaneInfo attribute), \hyperpage{3}
+  \item createMergedWires() (in module geometryGen), \hyperpage{5}
+
+  \indexspace
+  \bigletter D
+  \item dataTypes (module), \hyperpage{1}
+  \item DetectorVolume (class in dataTypes), \hyperpage{2}
+
+  \indexspace
+  \bigletter F
+  \item fireWires() (in module utilities), \hyperpage{4}
+
+  \indexspace
+  \bigletter G
+  \item generateBlobs() (in module geometryGen), \hyperpage{5}
+  \item generateEvent() (in module geometryGen), \hyperpage{5}
+  \item generatePlaneInfo() (in module utilities), \hyperpage{4}
+  \item geometryGen (module), \hyperpage{5}
+  \item geometryReco (module), \hyperpage{6}
+  \item getChannelNo() (in module utilities), \hyperpage{4}
+  \item gradient (dataTypes.PlaneInfo attribute), \hyperpage{3}
+
+  \indexspace
+  \bigletter H
+  \item height (dataTypes.DetectorVolume attribute), \hyperpage{2}
+
+  \indexspace
+  \bigletter L
+  \item Line (class in dataTypes), \hyperpage{2}
+  \item lineIntersection() (in module geometryReco), \hyperpage{6}
+
+  \indexspace
+  \bigletter M
+  \item makeLines() (in module geometryReco), \hyperpage{6}
+  \item mergeEvent() (in module geometryGen), \hyperpage{5}
+
+  \indexspace
+  \bigletter N
+  \item noOfWires (dataTypes.PlaneInfo attribute), \hyperpage{3}
+
+  \indexspace
+  \bigletter O
+  \item originTranslation (dataTypes.PlaneInfo attribute), \hyperpage{3}
+
+  \indexspace
+  \bigletter P
+  \item pitch (dataTypes.PlaneInfo attribute), \hyperpage{3}
+  \item PlaneInfo (class in dataTypes), \hyperpage{2}
+  \item Point (class in dataTypes), \hyperpage{3}
+  \item point0 (dataTypes.Line attribute), \hyperpage{2}
+  \item point1 (dataTypes.Line attribute), \hyperpage{2}
+  \item pointInWire() (in module utilities), \hyperpage{4}
+  \item points (dataTypes.Blob attribute), \hyperpage{1}
+  \item points (dataTypes.Cell attribute), \hyperpage{2}
+
+  \indexspace
+  \bigletter R
+  \item reconstructCells() (in module geometryReco), \hyperpage{6}
+
+  \indexspace
+  \bigletter S
+  \item sin (dataTypes.PlaneInfo attribute), \hyperpage{3}
+  \item sortPoints() (in module geometryReco), \hyperpage{6}
+
+  \indexspace
+  \bigletter U
+  \item utilities (module), \hyperpage{4}
+
+  \indexspace
+  \bigletter W
+  \item width (dataTypes.DetectorVolume attribute), \hyperpage{2}
+  \item wireIntersection() (in module geometryReco), \hyperpage{6}
+  \item wireNumberFromPoint() (in module utilities), \hyperpage{5}
+  \item wires (dataTypes.Blob attribute), \hyperpage{1}
+  \item wires (dataTypes.Cell attribute), \hyperpage{2}
+
+  \indexspace
+  \bigletter X
+  \item x (dataTypes.Point attribute), \hyperpage{4}
+
+  \indexspace
+  \bigletter Y
+  \item y (dataTypes.Point attribute), \hyperpage{4}
+
+\end{sphinxtheindex}

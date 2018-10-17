@@ -39,14 +39,18 @@ def main(argv):
     cellNumbering = False
     blobNumbering = False
     useCenterLines = "both"
-    drawFake = True
+    drawFake = False
+
+    #saveOptions
+    directory = "img"
+    fileName = "planeComp"
 
     #Set Colors
     trueColor = root.kGreen
     blobWidth = 4
 
-    recoColor = root.kRed
-    detectionColor = root.kBlue
+    recoColor = root.kBlue
+    detectionColor = root.kRed
     cellWidth = 4
 
     centerColor = root.kBlue
@@ -55,12 +59,8 @@ def main(argv):
     edgeColor = root.kBlack
     edgeStyle = 1
 
-    #saveOptions
-    directory = "img"
-    fileName = ""
-
     #Regularization Strength
-    alpha = 0.1
+    alpha = 0.01
 
 
  ######   ########  #######  ##     ## ######## ######## ########  ##    ##
@@ -79,10 +79,13 @@ def main(argv):
     planes = utilities.generatePlaneInfo(wirePitches, volume, angles)
 
     #Generating Random Blobs
-    blobs = geometryGen.generateBlobs(planes,volume, 4)
+    blobs = geometryGen.generateBlobs(planes,volume, 5)
 
-    # print(blobs)
-    
+    # blobs = [Blob(charge=16.817050314525563, wires=[(37, 43), (84, 87), (144, 146)], points=[Point(x=266.2702903438424, y=61.721582405888206), Point(x=279.06488600840225, y=88.56545278159894)]), Blob(charge=28.538433057496096, wires=[(96, 101), (49, 51), (50, 52)], points=[Point(x=736.3935059972442, y=131.76142968445015), Point(x=747.4521906990743, y=152.30731100309993)]), Blob(charge=33.031012508417305, wires=[(108, 114), (131, 132), (117, 123)], points=[Point(x=383.7691311506287, y=406.29539144323303), Point(x=411.0824425471208, y=422.2097468369453)]), Blob(charge=26.87037017812092, wires=[(63, 69), (110, 114), (145, 146)], points=[Point(x=265.28289648149183, y=214.44567715573982), Point(x=272.1466986953104, y=243.6909819161242)]), Blob(charge=34.00003693193055, wires=[(209, 213), (208, 208), (94, 98)], points=[Point(x=505.90296957755345, y=915.6380664123009), Point(x=527.2484490565548, y=929.1363967481078)])]
+
+
+    print(blobs)
+
     #Creating Event
     event = geometryGen.generateEvent(planes,blobs)
     #Merging Event
