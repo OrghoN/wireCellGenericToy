@@ -16,9 +16,9 @@ def main(argv):
     angles = driver.generateAngles(len(wirePitches))
 
     numbersOfBlobs = [3]
-    alphas = np.linspace(0.01,0.1,11)
+    alphas = np.linspace(0.1,1,11)
 
-    numberOfIterations = 100
+    numberOfIterations = 1000
 
     for numberOfBlobs in numbersOfBlobs:
         efficiency = array( 'f', len(alphas)*[ 0. ] )
@@ -57,7 +57,7 @@ def main(argv):
         g.GetXaxis().SetLabelSize(0.04)
 
         # g.Draw("A*")
-        g.Draw()
+        g.Draw("AC*")
     root.gApplication.Run()
 
 
