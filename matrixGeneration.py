@@ -70,19 +70,36 @@ def constructGeometryMatrix(planes, cells):
         list of merged channels, Matrix that associates merged wire with merged cells
 
     """
+    splittingList = []
+
+    # createSplittingList
+    for cellNo, cell in enumerate(cells):
+        for planeNo, wire in enumerate(cell.wires):
+            splittingList.append(utilities.getChannelNo(planes, wire[0], planeNo))
+            splittingList.append(utilities.getChannelNo(planes, wire[1], planeNo)+1)
+
+    #Sort and make list unique
+    splittingList = list(set(splittingList))
+    splittingList.sort()
+
     channelList = []
     matrix = []
 
     for cellNo, cell in enumerate(cells):
         for planeNo, wire in enumerate(cell.wires):
-            channelNo = (utilities.getChannelNo(planes, wire[0], planeNo), utilities.getChannelNo(planes, wire[1], planeNo))
+            channel0 = utilities.getChannelNo(planes, wire[0], planeNo)
+            channel1 = utilities.getChannelNo(planes, wire[1], planeNo)
 
-            #Check if wire is already in list
-            if channelNo not in channelList:
-                channelList.append(channelNo)
-                matrix.append(np.zeros(len(cells),dtype=int))
+            for i in range(splittingList.index(channel0),splittingList.index(channel1+1)):
+                mergedChannel = (splittingList[i],splittingList[i+1]-1)
+                fractionalAssociation = (mergedChannel[1]-mergedChannel[0]+1)/(channel1-channel0+1)
 
-            matrix[channelList.index(channelNo)][cellNo] = 1
+                #Check if wire is already in list
+                if mergedChannel not in channelList:
+                    channelList.append(mergedChannel)
+                    matrix.append(np.zeros(len(cells)))
+
+                matrix[channelList.index(mergedChannel)][cellNo] = fractionalAssociation
 
     return channelList, np.matrix(matrix)
 
@@ -97,7 +114,7 @@ def constructChargeList(planes,blobs):
         for planeNo, plane in enumerate(wires):
             charge = blob.charge/(len(plane))
             for wireNo in plane:
-                chargeList[planeNo][wireNo] += charge
+                chargeList[planeNo][wireNo-1] += charge
 
     return chargeList
 
@@ -109,7 +126,10 @@ def measureCharge(wireList,chargeList):
         charge = 0
         test = []
         for i in range(wire[0],wire[1]+1):
-            charge += chargeList[i]
+            try:
+                charge += chargeList[i-1]
+            except:
+                print(len(chargeList),i)
 
         charges.append(charge)
 

@@ -1,0 +1,465 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>dataTypes module &#8212; Wire Cell Generic Toy 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="wireCellGenericToy" href="modules.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-dataTypes">
+<span id="datatypes-module"></span><h1>dataTypes module<a class="headerlink" href="#module-dataTypes" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="dataTypes.Blob">
+<em class="property">class </em><code class="descclassname">dataTypes.</code><code class="descname">Blob</code><a class="headerlink" href="#dataTypes.Blob" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<p>Blob detected in tomographic slice</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Attributes:</th><td class="field-body"><dl class="first last docutils">
+<dt><a class="reference internal" href="#dataTypes.Blob.charge" title="dataTypes.Blob.charge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">charge</span></code></a></dt>
+<dd><p class="first last">Charge Associated with the Blob</p>
+</dd>
+<dt><a class="reference internal" href="#dataTypes.Blob.points" title="dataTypes.Blob.points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">points</span></code></a></dt>
+<dd><p class="first last">Points that define the ConvexHull of the blob</p>
+</dd>
+<dt><a class="reference internal" href="#dataTypes.Blob.wires" title="dataTypes.Blob.wires"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wires</span></code></a></dt>
+<dd><p class="first last">Wires that bind the Blob</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code>($self,&nbsp;value,&nbsp;/)</td>
+<td>Return number of occurrences of value.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code>($self,&nbsp;value[,&nbsp;start,&nbsp;stop])</td>
+<td>Return first index of value.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="dataTypes.Blob.charge">
+<code class="descname">charge</code><a class="headerlink" href="#dataTypes.Blob.charge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Charge Associated with the Blob</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dataTypes.Blob.points">
+<code class="descname">points</code><a class="headerlink" href="#dataTypes.Blob.points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Points that define the ConvexHull of the blob</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dataTypes.Blob.wires">
+<code class="descname">wires</code><a class="headerlink" href="#dataTypes.Blob.wires" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wires that bind the Blob</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="dataTypes.Cell">
+<em class="property">class </em><code class="descclassname">dataTypes.</code><code class="descname">Cell</code><a class="headerlink" href="#dataTypes.Cell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<p>Merged Cell in Detector</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Attributes:</th><td class="field-body"><dl class="first last docutils">
+<dt><a class="reference internal" href="#dataTypes.Cell.points" title="dataTypes.Cell.points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">points</span></code></a></dt>
+<dd><p class="first last">points binding the Cell</p>
+</dd>
+<dt><a class="reference internal" href="#dataTypes.Cell.wires" title="dataTypes.Cell.wires"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wires</span></code></a></dt>
+<dd><p class="first last">binding wires of the Cell</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code>($self,&nbsp;value,&nbsp;/)</td>
+<td>Return number of occurrences of value.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code>($self,&nbsp;value[,&nbsp;start,&nbsp;stop])</td>
+<td>Return first index of value.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="dataTypes.Cell.points">
+<code class="descname">points</code><a class="headerlink" href="#dataTypes.Cell.points" title="Permalink to this definition">¶</a></dt>
+<dd><p>points binding the Cell</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dataTypes.Cell.wires">
+<code class="descname">wires</code><a class="headerlink" href="#dataTypes.Cell.wires" title="Permalink to this definition">¶</a></dt>
+<dd><p>binding wires of the Cell</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="dataTypes.DetectorVolume">
+<em class="property">class </em><code class="descclassname">dataTypes.</code><code class="descname">DetectorVolume</code><a class="headerlink" href="#dataTypes.DetectorVolume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<p>2D dimensions of the detector</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Attributes:</th><td class="field-body"><dl class="first last docutils">
+<dt><a class="reference internal" href="#dataTypes.DetectorVolume.height" title="dataTypes.DetectorVolume.height"><code class="xref py py-obj docutils literal notranslate"><span class="pre">height</span></code></a></dt>
+<dd><p class="first last">height of detector</p>
+</dd>
+<dt><a class="reference internal" href="#dataTypes.DetectorVolume.width" title="dataTypes.DetectorVolume.width"><code class="xref py py-obj docutils literal notranslate"><span class="pre">width</span></code></a></dt>
+<dd><p class="first last">width of detector</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code>($self,&nbsp;value,&nbsp;/)</td>
+<td>Return number of occurrences of value.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code>($self,&nbsp;value[,&nbsp;start,&nbsp;stop])</td>
+<td>Return first index of value.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="dataTypes.DetectorVolume.height">
+<code class="descname">height</code><a class="headerlink" href="#dataTypes.DetectorVolume.height" title="Permalink to this definition">¶</a></dt>
+<dd><p>height of detector</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dataTypes.DetectorVolume.width">
+<code class="descname">width</code><a class="headerlink" href="#dataTypes.DetectorVolume.width" title="Permalink to this definition">¶</a></dt>
+<dd><p>width of detector</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="dataTypes.Line">
+<em class="property">class </em><code class="descclassname">dataTypes.</code><code class="descname">Line</code><a class="headerlink" href="#dataTypes.Line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<p>A line defined by two points</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Attributes:</th><td class="field-body"><dl class="first last docutils">
+<dt><a class="reference internal" href="#dataTypes.Line.point0" title="dataTypes.Line.point0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">point0</span></code></a></dt>
+<dd><p class="first last">First Point</p>
+</dd>
+<dt><a class="reference internal" href="#dataTypes.Line.point1" title="dataTypes.Line.point1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">point1</span></code></a></dt>
+<dd><p class="first last">Second Point</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code>($self,&nbsp;value,&nbsp;/)</td>
+<td>Return number of occurrences of value.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code>($self,&nbsp;value[,&nbsp;start,&nbsp;stop])</td>
+<td>Return first index of value.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="dataTypes.Line.point0">
+<code class="descname">point0</code><a class="headerlink" href="#dataTypes.Line.point0" title="Permalink to this definition">¶</a></dt>
+<dd><p>First Point</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dataTypes.Line.point1">
+<code class="descname">point1</code><a class="headerlink" href="#dataTypes.Line.point1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Second Point</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="dataTypes.PlaneInfo">
+<em class="property">class </em><code class="descclassname">dataTypes.</code><code class="descname">PlaneInfo</code><a class="headerlink" href="#dataTypes.PlaneInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<p>List of information about planes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Attributes:</th><td class="field-body"><dl class="first last docutils">
+<dt><a class="reference internal" href="#dataTypes.PlaneInfo.angle" title="dataTypes.PlaneInfo.angle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">angle</span></code></a></dt>
+<dd><p class="first last">angle by whitch plane is roatated</p>
+</dd>
+<dt><a class="reference internal" href="#dataTypes.PlaneInfo.cos" title="dataTypes.PlaneInfo.cos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cos</span></code></a></dt>
+<dd><p class="first last">cos of the plane angle</p>
+</dd>
+<dt><a class="reference internal" href="#dataTypes.PlaneInfo.gradient" title="dataTypes.PlaneInfo.gradient"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gradient</span></code></a></dt>
+<dd><p class="first last">gradient of the wires in plane</p>
+</dd>
+<dt><a class="reference internal" href="#dataTypes.PlaneInfo.noOfWires" title="dataTypes.PlaneInfo.noOfWires"><code class="xref py py-obj docutils literal notranslate"><span class="pre">noOfWires</span></code></a></dt>
+<dd><p class="first last">number of wires in the plane</p>
+</dd>
+<dt><a class="reference internal" href="#dataTypes.PlaneInfo.originTranslation" title="dataTypes.PlaneInfo.originTranslation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">originTranslation</span></code></a></dt>
+<dd><p class="first last">x offset for origin of the plane (y origin is always 0)</p>
+</dd>
+<dt><a class="reference internal" href="#dataTypes.PlaneInfo.pitch" title="dataTypes.PlaneInfo.pitch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pitch</span></code></a></dt>
+<dd><p class="first last">wire pitch for the plane</p>
+</dd>
+<dt><a class="reference internal" href="#dataTypes.PlaneInfo.sin" title="dataTypes.PlaneInfo.sin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sin</span></code></a></dt>
+<dd><p class="first last">sin of the plane angle</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code>($self,&nbsp;value,&nbsp;/)</td>
+<td>Return number of occurrences of value.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code>($self,&nbsp;value[,&nbsp;start,&nbsp;stop])</td>
+<td>Return first index of value.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="dataTypes.PlaneInfo.angle">
+<code class="descname">angle</code><a class="headerlink" href="#dataTypes.PlaneInfo.angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>angle by whitch plane is roatated</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dataTypes.PlaneInfo.cos">
+<code class="descname">cos</code><a class="headerlink" href="#dataTypes.PlaneInfo.cos" title="Permalink to this definition">¶</a></dt>
+<dd><p>cos of the plane angle</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dataTypes.PlaneInfo.gradient">
+<code class="descname">gradient</code><a class="headerlink" href="#dataTypes.PlaneInfo.gradient" title="Permalink to this definition">¶</a></dt>
+<dd><p>gradient of the wires in plane</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dataTypes.PlaneInfo.noOfWires">
+<code class="descname">noOfWires</code><a class="headerlink" href="#dataTypes.PlaneInfo.noOfWires" title="Permalink to this definition">¶</a></dt>
+<dd><p>number of wires in the plane</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dataTypes.PlaneInfo.originTranslation">
+<code class="descname">originTranslation</code><a class="headerlink" href="#dataTypes.PlaneInfo.originTranslation" title="Permalink to this definition">¶</a></dt>
+<dd><p>x offset for origin of the plane (y origin is always 0)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dataTypes.PlaneInfo.pitch">
+<code class="descname">pitch</code><a class="headerlink" href="#dataTypes.PlaneInfo.pitch" title="Permalink to this definition">¶</a></dt>
+<dd><p>wire pitch for the plane</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dataTypes.PlaneInfo.sin">
+<code class="descname">sin</code><a class="headerlink" href="#dataTypes.PlaneInfo.sin" title="Permalink to this definition">¶</a></dt>
+<dd><p>sin of the plane angle</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="dataTypes.Point">
+<em class="property">class </em><code class="descclassname">dataTypes.</code><code class="descname">Point</code><a class="headerlink" href="#dataTypes.Point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<p>A 2-dimensional coordinate</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Attributes:</th><td class="field-body"><dl class="first last docutils">
+<dt><a class="reference internal" href="#dataTypes.Point.x" title="dataTypes.Point.x"><code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code></a></dt>
+<dd><p class="first last">x coordinate</p>
+</dd>
+<dt><a class="reference internal" href="#dataTypes.Point.y" title="dataTypes.Point.y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code></a></dt>
+<dd><p class="first last">y coordinate</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code>($self,&nbsp;value,&nbsp;/)</td>
+<td>Return number of occurrences of value.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code>($self,&nbsp;value[,&nbsp;start,&nbsp;stop])</td>
+<td>Return first index of value.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="dataTypes.Point.x">
+<code class="descname">x</code><a class="headerlink" href="#dataTypes.Point.x" title="Permalink to this definition">¶</a></dt>
+<dd><p>x coordinate</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dataTypes.Point.y">
+<code class="descname">y</code><a class="headerlink" href="#dataTypes.Point.y" title="Permalink to this definition">¶</a></dt>
+<dd><p>y coordinate</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Wire Cell Generic Toy</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">wireCellGenericToy</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">dataTypes module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utilities.html">utilities module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometryGen.html">geometryGen module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometryReco.html">geometryReco module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="draw.html">draw module</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">wireCellGenericToy</a><ul>
+      <li>Previous: <a href="modules.html" title="previous chapter">wireCellGenericToy</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Orgho Neogi.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="_sources/dataTypes.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

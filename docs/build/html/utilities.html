@@ -1,0 +1,265 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>utilities module &#8212; Wire Cell Generic Toy 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="geometryGen module" href="geometryGen.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-utilities">
+<span id="utilities-module"></span><h1>utilities module<a class="headerlink" href="#module-utilities" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="utilities.fireWires">
+<code class="descclassname">utilities.</code><code class="descname">fireWires</code><span class="sig-paren">(</span><em>planes</em>, <em>points</em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.fireWires" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show which wires have been hit for a given blob</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>planes</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list of PlaneInfo</span></dt>
+<dd><p class="first last">A list containing information for all the planes in the detector</p>
+</dd>
+<dt><strong>points</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list of points</span></dt>
+<dd><p class="first last">points defining ConvexHull of blob</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>2d list of int</strong></dt>
+<dd><p class="first last">A list that has lists of merged wire numbers. one list for every plane</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="utilities.generatePlaneInfo">
+<code class="descclassname">utilities.</code><code class="descname">generatePlaneInfo</code><span class="sig-paren">(</span><em>wirePitches</em>, <em>volume</em>, <em>angles</em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.generatePlaneInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates information about planes based on wire pitches and volume assuming equal angle between each plane and the next</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>wirePitches</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list or tuple of int or float</span></dt>
+<dd><p class="first last">A list of wire pitches, each number corresponding to the pitch of each plane</p>
+</dd>
+<dt><strong>volume</strong> <span class="classifier-delimiter">:</span> <span class="classifier">DetectorVolume</span></dt>
+<dd><p class="first last">The width and height of the detector</p>
+</dd>
+<dt><strong>angles</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list or tuple of float</span></dt>
+<dd><p class="first last">List of the angles of the wire plane in radians</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>list of PlaneInfo</strong></dt>
+<dd><p class="first last">List of information regarding the planes.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="utilities.getChannelNo">
+<code class="descclassname">utilities.</code><code class="descname">getChannelNo</code><span class="sig-paren">(</span><em>planes</em>, <em>wireNo</em>, <em>planeNo</em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.getChannelNo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get Channel Number for a merged wire</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>planes</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list of PlaneInfo</span></dt>
+<dd><p class="first last">A list containing information for all the planes in the detector</p>
+</dd>
+<dt><strong>wireNo</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">Primitive Wire</p>
+</dd>
+<dt><strong>planeNo</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">Index of plane the wires are in</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>int</strong></dt>
+<dd><p class="first last">Channel number for a primitive wire</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="utilities.pointInWire">
+<code class="descclassname">utilities.</code><code class="descname">pointInWire</code><span class="sig-paren">(</span><em>plane</em>, <em>point</em>, <em>wire</em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.pointInWire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a point is inside a certain merged wire</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>plane</strong> <span class="classifier-delimiter">:</span> <span class="classifier">PlaneInfo</span></dt>
+<dd><p class="first last">Plane information for the plane the wire number is for</p>
+</dd>
+<dt><strong>point</strong> <span class="classifier-delimiter">:</span> <span class="classifier">Point</span></dt>
+<dd><p class="first last">The point being queried</p>
+</dd>
+<dt><strong>wire</strong> <span class="classifier-delimiter">:</span> <span class="classifier">tuple[2] of int</span></dt>
+<dd><p class="first last">A merged wire</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>Boolean</strong></dt>
+<dd><p class="first last">True if point is in wire, False if not</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="utilities.wireNumberFromPoint">
+<code class="descclassname">utilities.</code><code class="descname">wireNumberFromPoint</code><span class="sig-paren">(</span><em>plane</em>, <em>point</em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.wireNumberFromPoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates the wire number for a point given a certain plane</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>plane</strong> <span class="classifier-delimiter">:</span> <span class="classifier">PlaneInfo</span></dt>
+<dd><p class="first last">Plane information for the plane the wire number is for</p>
+</dd>
+<dt><strong>point</strong> <span class="classifier-delimiter">:</span> <span class="classifier">Point</span></dt>
+<dd><p class="first last">The point being queried</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>int</strong></dt>
+<dd><p class="first last">Primitive Wire number</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Wire Cell Generic Toy</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">wireCellGenericToy</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dataTypes.html">dataTypes module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">utilities module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometryGen.html">geometryGen module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometryReco.html">geometryReco module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="draw.html">draw module</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">wireCellGenericToy</a><ul>
+      <li>Next: <a href="geometryGen.html" title="next chapter">geometryGen module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Orgho Neogi.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="_sources/utilities.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

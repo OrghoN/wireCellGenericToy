@@ -1,0 +1,43 @@
+\indexentry{dataTypes (module)|hyperpage}{1}
+\indexentry{Blob (class in dataTypes)|hyperpage}{1}
+\indexentry{charge (dataTypes.Blob attribute)|hyperpage}{1}
+\indexentry{points (dataTypes.Blob attribute)|hyperpage}{1}
+\indexentry{wires (dataTypes.Blob attribute)|hyperpage}{1}
+\indexentry{Cell (class in dataTypes)|hyperpage}{1}
+\indexentry{points (dataTypes.Cell attribute)|hyperpage}{2}
+\indexentry{wires (dataTypes.Cell attribute)|hyperpage}{2}
+\indexentry{DetectorVolume (class in dataTypes)|hyperpage}{2}
+\indexentry{height (dataTypes.DetectorVolume attribute)|hyperpage}{2}
+\indexentry{width (dataTypes.DetectorVolume attribute)|hyperpage}{2}
+\indexentry{Line (class in dataTypes)|hyperpage}{2}
+\indexentry{point0 (dataTypes.Line attribute)|hyperpage}{2}
+\indexentry{point1 (dataTypes.Line attribute)|hyperpage}{2}
+\indexentry{PlaneInfo (class in dataTypes)|hyperpage}{2}
+\indexentry{angle (dataTypes.PlaneInfo attribute)|hyperpage}{3}
+\indexentry{cos (dataTypes.PlaneInfo attribute)|hyperpage}{3}
+\indexentry{gradient (dataTypes.PlaneInfo attribute)|hyperpage}{3}
+\indexentry{noOfWires (dataTypes.PlaneInfo attribute)|hyperpage}{3}
+\indexentry{originTranslation (dataTypes.PlaneInfo attribute)|hyperpage}{3}
+\indexentry{pitch (dataTypes.PlaneInfo attribute)|hyperpage}{3}
+\indexentry{sin (dataTypes.PlaneInfo attribute)|hyperpage}{3}
+\indexentry{Point (class in dataTypes)|hyperpage}{3}
+\indexentry{x (dataTypes.Point attribute)|hyperpage}{4}
+\indexentry{y (dataTypes.Point attribute)|hyperpage}{4}
+\indexentry{utilities (module)|hyperpage}{4}
+\indexentry{fireWires() (in module utilities)|hyperpage}{4}
+\indexentry{generatePlaneInfo() (in module utilities)|hyperpage}{4}
+\indexentry{getChannelNo() (in module utilities)|hyperpage}{4}
+\indexentry{pointInWire() (in module utilities)|hyperpage}{4}
+\indexentry{wireNumberFromPoint() (in module utilities)|hyperpage}{5}
+\indexentry{geometryGen (module)|hyperpage}{5}
+\indexentry{createMergedWires() (in module geometryGen)|hyperpage}{5}
+\indexentry{generateBlobs() (in module geometryGen)|hyperpage}{5}
+\indexentry{generateEvent() (in module geometryGen)|hyperpage}{5}
+\indexentry{mergeEvent() (in module geometryGen)|hyperpage}{5}
+\indexentry{geometryReco (module)|hyperpage}{6}
+\indexentry{checkCell() (in module geometryReco)|hyperpage}{6}
+\indexentry{lineIntersection() (in module geometryReco)|hyperpage}{6}
+\indexentry{makeLines() (in module geometryReco)|hyperpage}{6}
+\indexentry{reconstructCells() (in module geometryReco)|hyperpage}{6}
+\indexentry{sortPoints() (in module geometryReco)|hyperpage}{6}
+\indexentry{wireIntersection() (in module geometryReco)|hyperpage}{6}
